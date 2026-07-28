@@ -1,0 +1,77 @@
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { GiFullPizza } from 'react-icons/gi';
+import { ROUTES } from '../../config/routes';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Auth/AuthContext';
+
+export const NavBar = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, logout, userName } = useAuth();
+  const handleLogout = () => {
+    logout();
+    navigate(ROUTES.HOME);
+  };
+  const pages = [
+    { name: 'Orders', path: ROUTES.ORDERS },
+    { name: 'Menu', path: ROUTES.MENU },
+    { name: 'Ingredients', path: ROUTES.INGREDIENTS },
+    { name: 'Users', path: ROUTES.USERS }
+  ];
+  const authPages = [
+    { name: 'Log In', path: ROUTES.LOG_IN },
+    { name: 'Sign Up', path: ROUTES.SIGN_UP }
+  ];
+  const logoutPage = { name: 'Log Out', onClick: handleLogout };
+  
+  return (
+    <AppBar position="static">
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={() => navigate(ROUTES.HOME)}
+          >
+            <GiFullPizza />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Totino's Pizza
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex' }}>
+          {pages.map((page) => (
+            <Button
+              key={page.name}
+              onClick={() => navigate(page.path)}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              {page.name}
+            </Button>
+          ))}
+        </Box>
+        {isAuthenticated ? (
+          <Box sx={{ display: 'flex' }}>
+            <Typography variant="body1">{userName}</Typography>
+            <Button onClick={logoutPage.onClick} color="inherit">
+              {logoutPage.name}
+            </Button>
+          </Box>  
+        ) : (
+          <Box sx={{ display: 'flex' }}>
+            {authPages.map((page) => (
+              <Button
+                key={page.name}
+                onClick={() => navigate(page.path)}
+                color="inherit"
+              >
+                {page.name}
+              </Button>
+            ))}
+          </Box>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+};
