@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
 import { Main } from '../../components/templates/Main/Main';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
+import { HiUsers } from "react-icons/hi";
 
 export const Users = () => {
   return (
     <Main>
-      <Typography variant="h1">Users</Typography>
+      <PageHeader title="Users" icon={<HiUsers />} />
     </Main>
   );
 };

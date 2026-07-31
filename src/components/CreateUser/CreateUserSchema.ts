@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { UserRolesEnum } from '../../constants/user-roles';
 
-export const signUpSchema = z.object({
+export const createUserSchema = z.object({
   username: z.string().trim().min(2, 'Username must have at least 2 characters'),
   phone: z.string().trim().regex(/^\+?[1-9]\d{7,14}$/, 'Enter a valid phone number'),
   email: z.email('Enter a valid email address'),
@@ -12,5 +12,4 @@ export const signUpSchema = z.object({
   ]),
 });
 
-export type SignUpFormValues = z.infer<typeof signUpSchema>;
-export type SignUpFormErrors = Partial<Record<keyof SignUpFormValues, string>>;
+export type CreateUserFormData = z.infer<typeof createUserSchema>;

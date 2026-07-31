@@ -1,5 +1,5 @@
-import { useForm, Controller } from 'react-hook-form';
-import { Box, Button, Paper, TextField } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { Box, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
@@ -10,6 +10,9 @@ import { BiSolidLogIn } from "react-icons/bi";
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { loginSchema, type LoginFormData } from './LoginSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordField } from '../../components/FormFields/PasswordField/PasswordField';
+import { EmailField } from '../../components/FormFields/EmailField/EmailField';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export const LogIn = () => {
   const navigate = useNavigate();
@@ -45,47 +48,12 @@ export const LogIn = () => {
   return (
     <Main>
       <PageHeader title="Log In" icon={<BiSolidLogIn />} />
-      <Paper elevation={3} sx={{ maxWidth: '40%', p: 4 }}>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate  sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Controller name="email"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                autoComplete="email"
-                autoFocus
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                size="small"
-              />
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                size="small"
-              />
-            )}
-          />
-
+      <Paper elevation={3} sx={{ width: { xs: '100%', md: '40%', lg: '30%' }, p: 4 }}>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <EmailField control={control} errors={errors} />
+          <PasswordField control={control} errors={errors} />
           <Button type="submit" variant="contained" disabled={isPending}>
-            {isSubmitting ? 'Logging in...' : 'Log In'}
+            {isSubmitting ? <CircularProgress size={30} /> : 'Log In'}
           </Button>
         </Box>
       </Paper>
