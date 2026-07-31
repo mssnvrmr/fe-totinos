@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserRole } from "../constants/user-roles";
+import type { User } from "../interfaces/User";
 
 type LoginPayload = {
   email: string;
@@ -57,6 +58,12 @@ async function register(payload: RegisterPayload): Promise<RegisterResponse> {
   return { message: "Register successful" };
 }
 
+async function getUsers(): Promise<User[]> {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`);
+  const data = await res.json();
+  return data;
+}
+
 export function useLogin() {
   const queryClient = useQueryClient();
 
@@ -78,3 +85,11 @@ export function useSignUp() {
     onSuccess: () => {}
   });
 }
+
+export function useGetUsers() {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers()
+  });
+}
+
