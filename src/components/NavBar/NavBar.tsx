@@ -26,13 +26,8 @@ export const NavBar = () => {
   return (
     <AppBar position="static">
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={() => navigate(ROUTES.HOME)}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <IconButton color="primary" sx={{ color: 'white' }} size="large" edge="start" onClick={() => navigate(ROUTES.HOME)}
           >
             <GiFullPizza />
           </IconButton>
@@ -40,7 +35,7 @@ export const NavBar = () => {
             Totino's Pizza
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', gap: 2 }}>
           {pages.map((page) => (
             <Button
               key={page.name}
@@ -54,17 +49,17 @@ export const NavBar = () => {
         {isAuthenticated ? (
           <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
             <Typography variant="body2" color="primary">Welcome, {userName}</Typography>
-            <Button onClick={logoutPage.onClick} color="inherit">
+            <Button onClick={logoutPage.onClick} sx={{ color: 'white' }}>
               {logoutPage.name}
             </Button>
           </Stack>  
         ) : (
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             {authPages.map((page) => (
               <Button
                 key={page.name}
                 onClick={() => navigate(page.path)}
-                color="inherit"
+                sx={{ color: 'white' }}
               >
                 {page.name}
               </Button>

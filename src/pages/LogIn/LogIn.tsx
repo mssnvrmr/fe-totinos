@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
 import { useAuth } from '../../components/Auth/AuthContext';
 import { ROUTES } from '../../config/routes';
 import { Main } from '../../components/templates/Main/Main';
+import { BiSolidLogIn } from "react-icons/bi";
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 
 export const LogIn = () => {
   const navigate = useNavigate();
@@ -34,29 +36,31 @@ export const LogIn = () => {
 
   return (
     <Main>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Log In
-      </Typography>
-      <Paper elevation={3} sx={{ maxWidth: '30%', p: 4 }}>
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <PageHeader title="Log In" icon={<BiSolidLogIn />} />
+      <Paper elevation={3} sx={{ maxWidth: '40%', p: 4 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             label="Email"
-            type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            required
             fullWidth
+            required
             disabled={isPending}
+            size="small"
           />
           <TextField
             label="Password"
             type="password"
+            required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            required
             fullWidth
             disabled={isPending}
+            error={false}
+            helperText="Invalid email or password"
+            size="small"
           />
+
           <Button type="submit" variant="contained" disabled={isPending}>
             {isPending ? 'Logging in...' : 'Log In'}
           </Button>

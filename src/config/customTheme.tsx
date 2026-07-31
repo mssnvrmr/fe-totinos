@@ -10,4 +10,16 @@ export const customTheme: ThemeOptions = {
       main: '#FFB300',
     },
   },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0 100px rgb(41 63 61) inset',
+            WebkitTextFillColor: '#ffffff',
+          },
+        },
+      },
+    },
+  },
 };
