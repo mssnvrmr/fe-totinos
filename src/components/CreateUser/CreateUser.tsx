@@ -11,7 +11,7 @@ import { PhoneField } from '../FormFields/PhoneField/PhoneField';
 import { EmailField } from '../FormFields/EmailField/EmailField';
 import { CustomTextField } from '../FormFields/CustomTextField/CustomTextField';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
-import { createUserSchema, type CreateUserFormData } from '../../pages/SignUp/CreateUserSchema';
+import { createUserSchema, type CreateUserFormData } from './CreateUserSchema';
 
 interface CreateUserProps {
   submitLabel: string;
