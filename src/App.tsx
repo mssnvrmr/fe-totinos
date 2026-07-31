@@ -5,12 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Router } from './components/Router/Router';
 import { SnackbarProvider } from 'notistack';
 import { AuthProvider } from './components/Auth/AuthContext';
+import { customTheme } from './config/customTheme';
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
+const theme = createTheme(customTheme);
 
 const queryClient = new QueryClient();
 
@@ -18,7 +15,7 @@ function App() {
   return (
     <React.Fragment>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={theme}>
           <CssBaseline />
           <SnackbarProvider
             maxSnack={3}

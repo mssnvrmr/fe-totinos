@@ -53,7 +53,7 @@ export const NavBar = () => {
         </Box>
         {isAuthenticated ? (
           <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" color="secondary">Welcome, {userName}</Typography>
+            <Typography variant="body2" color="primary">Welcome, {userName}</Typography>
             <Button onClick={logoutPage.onClick} color="inherit">
               {logoutPage.name}
             </Button>
