@@ -69,11 +69,7 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: login,
-    onSuccess: ({ token, name, role }) => {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user_name", name);
-      localStorage.setItem("user_role", role);
-      // optional: refresh any user-related queries
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
