@@ -19,8 +19,8 @@ export const Router = () => {
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.LOG_IN} element={<LogIn />} />
         <Route path={ROUTES.SIGN_UP} element={<SignUp />} />
+        <Route path={ROUTES.ORDERS} element={<Orders />} />
         <Route element={<PrivateRoute isLoggedIn={isAuthenticated} />}>
-          <Route path={ROUTES.ORDERS} element={<Orders />} />
           <Route path={ROUTES.MENU} element={<Menu />} />
           <Route path={ROUTES.INGREDIENTS} element={<Ingredients />} />
           <Route path={ROUTES.USERS} element={<Users />} />
