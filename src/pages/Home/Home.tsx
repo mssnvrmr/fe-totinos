@@ -1,13 +1,11 @@
-import React from 'react';
-import { Typography } from '@mui/material';
 import { Main } from '../../components/templates/Main/Main';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
+import { ImHome3 } from "react-icons/im";
 
 export const Home = () => {
   return (
-    <React.Fragment>
-      <Main>
-        <Typography variant="h1">Home</Typography>
-      </Main>
-    </React.Fragment>
+    <Main>
+      <PageHeader title="Home" icon={<ImHome3 />} />
+    </Main>
   );
 };

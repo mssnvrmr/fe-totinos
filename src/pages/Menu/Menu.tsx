@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
 import { Main } from '../../components/templates/Main/Main';
+import { MdRestaurantMenu } from "react-icons/md";
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 
 export const Menu = () => {
   return (
     <Main>
-      <Typography variant="h1">Menu</Typography>
+      <PageHeader title="Menu" icon={<MdRestaurantMenu />} />
     </Main>
   );
 };

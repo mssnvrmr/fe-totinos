@@ -1,10 +1,11 @@
-import { Typography } from '@mui/material';
 import { Main } from '../../components/templates/Main/Main';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
+import { GiFruitBowl } from "react-icons/gi";
 
 export const Ingredients = () => {
   return (
     <Main>
-      <Typography variant="h1">Ingredients</Typography>
+      <PageHeader title="Ingredients" icon={<GiFruitBowl />} />
     </Main>
   );
 };

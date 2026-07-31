@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, MenuItem, Paper, Select, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useSignUp } from '../../api/users';
@@ -7,6 +7,8 @@ import { ROUTES } from '../../config/routes';
 import { Main } from '../../components/templates/Main/Main';
 import { UserRolesEnum, type UserRole } from '../../constants/user-roles';
 import { signUpSchema, type SignUpFormErrors, type SignUpFormValues } from './SignUpSchema';
+import { FaFileSignature } from "react-icons/fa";
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { z } from 'zod';
 
 export const SignUp = () => {
@@ -60,9 +62,7 @@ export const SignUp = () => {
 
   return (
     <Main>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Sign Up
-      </Typography>
+      <PageHeader title="Sign Up" icon={<FaFileSignature />} />
       <Paper elevation={3} sx={{ width: { xs: '100%', sm: '60%', md: '30%' }, p: 4 }}>
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
         <TextField
