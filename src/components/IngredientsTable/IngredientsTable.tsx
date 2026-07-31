@@ -17,7 +17,7 @@ import { useDeleteIngredient, useGetIngredients } from '../../api/ingredients';
 import { ingredientsTableColumns } from '../../constants/ingredients-table';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
-import { CreateIngredient } from '../CreateIngredient/CreateIngredient';
+import { CreateIngredient } from '../IngredientForm/IngredientForm';
 import { useAuth } from '../Auth/AuthContext';
 import type { Ingredient } from '../../interfaces/Ingredient';
 

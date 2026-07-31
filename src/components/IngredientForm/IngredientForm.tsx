@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomTextField } from '../FormFields/CustomTextField/CustomTextField';
-import { createIngredientSchema, type CreateIngredientFormData } from './CreateIngredient.schema';
+import { createIngredientSchema, type CreateIngredientFormData } from './IngredientForm.schema';
 import { useCreateIngredient } from '../../api/ingredients';
 
 
