@@ -22,7 +22,7 @@ export const NavBar = () => {
     { name: 'Sign Up', path: ROUTES.SIGN_UP }
   ];
   const logoutPage = { name: 'Log Out', onClick: handleLogout };
-  
+
   return (
     <AppBar position="static">
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -48,11 +48,14 @@ export const NavBar = () => {
         </Box>
         {isAuthenticated ? (
           <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
-            <Typography variant="body2" color="primary">Welcome, {userName}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography component="span" variant="body2">Welcome,</Typography>
+              <Typography component="span" variant="body2" color="primary">{userName}</Typography>
+            </Box>
             <Button onClick={logoutPage.onClick} sx={{ color: 'white' }}>
               {logoutPage.name}
             </Button>
-          </Stack>  
+          </Stack>
         ) : (
           <Box sx={{ display: 'flex', gap: 2 }}>
             {authPages.map((page) => (
