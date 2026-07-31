@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
 import { useAuth } from '../../components/Auth/AuthContext';
 import { ROUTES } from '../../config/routes';
-import { Main } from '../../components/templates/Main/Main';
+import { Main } from '../../components/Templates/Main/Main';
 import { BiSolidLogIn } from "react-icons/bi";
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { loginSchema, type LoginFormData } from './LoginSchema';

@@ -1,4 +1,4 @@
-import { Main } from '../../components/templates/Main/Main';
+import { Main } from '../../components/Templates/Main/Main';
 import { IoReceiptSharp } from "react-icons/io5";
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 
