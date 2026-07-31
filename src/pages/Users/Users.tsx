@@ -1,12 +1,10 @@
-import React from 'react';
-import { Container, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { Main } from '../../components/templates/Main/Main';
 
 export const Users = () => {
   return (
-    <React.Fragment>
-      <Container maxWidth="lg">
-        <Typography variant="h1">Users</Typography>
-      </Container>
-    </React.Fragment>
+    <Main>
+      <Typography variant="h1">Users</Typography>
+    </Main>
   );
 };

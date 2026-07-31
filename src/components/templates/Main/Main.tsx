@@ -1,16 +1,24 @@
 import React from 'react';
-import { Box, Container } from '@mui/material';
+import { Stack } from '@mui/material';
 import { NavBar } from '../../NavBar/NavBar';
 import { Footer } from '../../Footer/Footer';
 
 export const Main = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Stack sx={{ display: 'flex', height: '100vh', width: '100vw', alignItems: 'center'}}>
       <NavBar />
-      <Container sx={{ width: '90%', margin: '0 auto', flex: 1 }}>
+      <Stack
+        sx={{
+          width: '100%',
+          flex: 1,
+          p: 4,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {children}
-      </Container>
+      </Stack>
       <Footer />
-    </Box>
+    </Stack>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
@@ -20,13 +20,13 @@ export const LogIn = () => {
     mutate(
       { email, password },
       {
-        onSuccess: ({ token, name }) => {
-          login(token, name);
+        onSuccess: ({ token, name, role }) => {
+          login(token, name, role);
           enqueueSnackbar('Logged in successfully', { variant: 'success' });
           navigate(ROUTES.ORDERS);
         },
-        onError: () => {
-          enqueueSnackbar('Login failed', { variant: 'error' });
+        onError: (error) => {
+          enqueueSnackbar(`Login failed: ${error.message}`, { variant: 'error' });
         },
       },
     );
@@ -34,32 +34,34 @@ export const LogIn = () => {
 
   return (
     <Main>
-      <Typography variant="h1" sx={{ mb: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
         Log In
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <TextField
-          label="Email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          fullWidth
-          disabled={isPending}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          fullWidth
-          disabled={isPending}
-        />
-        <Button type="submit" variant="contained" disabled={isPending}>
-          {isPending ? 'Logging in...' : 'Log In'}
-        </Button>
-      </Box>
+      <Paper elevation={3} sx={{ maxWidth: '30%', p: 4 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            fullWidth
+            disabled={isPending}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            fullWidth
+            disabled={isPending}
+          />
+          <Button type="submit" variant="contained" disabled={isPending}>
+            {isPending ? 'Logging in...' : 'Log In'}
+          </Button>
+        </Box>
+      </Paper>
     </Main>
   );
 };

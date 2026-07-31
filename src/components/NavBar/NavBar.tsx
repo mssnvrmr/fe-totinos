@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import { GiFullPizza } from 'react-icons/gi';
 import { ROUTES } from '../../config/routes';
 import { useNavigate } from 'react-router-dom';
@@ -52,12 +52,12 @@ export const NavBar = () => {
           ))}
         </Box>
         {isAuthenticated ? (
-          <Box sx={{ display: 'flex' }}>
-            <Typography variant="body1">{userName}</Typography>
+          <Stack direction="row" sx={{ alignItems: 'center', gap: 2 }}>
+            <Typography variant="body2" color="secondary">Welcome, {userName}</Typography>
             <Button onClick={logoutPage.onClick} color="inherit">
               {logoutPage.name}
             </Button>
-          </Box>  
+          </Stack>  
         ) : (
           <Box sx={{ display: 'flex' }}>
             {authPages.map((page) => (
