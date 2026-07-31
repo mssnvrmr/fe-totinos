@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Stack, Button } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
@@ -56,11 +56,11 @@ export const CreateUser = ({
   };
 
   return (
-    <Box
+    <Stack
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
+      sx={{ width: '100%', gap: 2 }}
     >
       <CustomTextField
         name="username"
@@ -89,6 +89,6 @@ export const CreateUser = ({
       <Button type="submit" variant="contained" disabled={isSubmitting || isPending}>
         {isSubmitting || isPending ? <CircularProgress size={30} /> : submitLabel}
       </Button>
-    </Box>
+    </Stack>
   );
 };

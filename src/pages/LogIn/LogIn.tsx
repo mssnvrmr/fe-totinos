@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Box, Button, Paper } from '@mui/material';
+import { Stack, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
@@ -49,13 +49,13 @@ export const LogIn = () => {
     <Main>
       <PageHeader title="Log In" icon={<BiSolidLogIn />} />
       <Paper elevation={3} sx={{ width: { xs: '100%', md: '40%', lg: '30%' }, p: 4 }}>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Stack component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ width: '100%', gap: 3 }}>
           <EmailField control={control} errors={errors} />
           <PasswordField control={control} errors={errors} />
           <Button type="submit" variant="contained" disabled={isPending}>
             {isSubmitting ? <CircularProgress size={30} /> : 'Log In'}
           </Button>
-        </Box>
+        </Stack>
       </Paper>
     </Main>
   );
