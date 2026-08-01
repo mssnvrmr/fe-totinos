@@ -32,6 +32,7 @@ export const IngredientForm = ({
   } = useForm<IngredientFormData>({
     resolver: zodResolver(ingredientFormSchema),
     defaultValues: {
+      id: ingredient?.id ?? '',
       name: ingredient?.name ?? '',
       price: ingredient?.price ?? 0,
       stock: ingredient?.stock ?? 0,
@@ -73,6 +74,15 @@ export const IngredientForm = ({
       noValidate
       sx={{ width: '100%', gap: 2 }}
     >
+      {isEditMode &&
+        <CustomTextField
+          name="id"
+          label="Id"
+          control={control}
+          errors={errors}
+          isDisabled={true}
+        />
+      }
       <CustomTextField
         name="name"
         label="Name"

@@ -17,6 +17,7 @@ interface CustomTextFieldProps<T extends FieldValues> {
   autoFocus?: boolean;
   startAdornment?: string | React.ReactNode;
   endAdornment?: string | React.ReactNode;
+  isDisabled?: boolean;
 }
 
 export const CustomTextField = <T extends FieldValues>({
@@ -29,6 +30,7 @@ export const CustomTextField = <T extends FieldValues>({
   autoFocus,
   startAdornment,
   endAdornment,
+  isDisabled = false,
 }: CustomTextFieldProps<T>) => {
   const error = errors[name];
 
@@ -39,6 +41,7 @@ export const CustomTextField = <T extends FieldValues>({
       render={({ field }) => (
         <TextField
           {...field}
+          disabled={isDisabled}
           slotProps={{
             input: {
               startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, CircularProgress, Typography } from '@mui/material';
+import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { useDeleteIngredient, useGetIngredients } from '../../api/ingredients';
 import { ingredientsTableColumns } from '../../constants/ingredients-table';
@@ -9,6 +9,7 @@ import { IngredientForm } from '../IngredientForm/IngredientForm';
 import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
 import { useAuth } from '../Auth/AuthContext';
 import type { Ingredient } from '../../interfaces/Ingredient';
+import { SearchField } from '../FormFields/SearchField/SearchField';
 
 export const IngredientsTable = () => {
   const { data: ingredients = [] } = useGetIngredients();
@@ -55,6 +56,16 @@ export const IngredientsTable = () => {
     setSelectedIngredient(undefined);
   };
 
+  const handleSearch = (value: string) => {
+    const ingredient = ingredients.find((item) => item.id === value);
+    if (ingredient) {
+      setSelectedIngredient(ingredient);
+      setOpenModal(true);
+    } else {
+      enqueueSnackbar('Ingredient not found', { variant: 'error' });
+    }
+  };
+
   return (
     <React.Fragment>
       <CustomModal
@@ -69,6 +80,7 @@ export const IngredientsTable = () => {
           onSuccess={closeModal}
         />
       </CustomModal>
+
       <CustomModal
         open={openDeleteModal}
         onClose={closeDeleteModal}
@@ -80,9 +92,12 @@ export const IngredientsTable = () => {
         </Button>
       </CustomModal>
       {isAdmin && (
-        <Button variant="contained" color="primary" onClick={handleCreate}>
-          Create New Ingredient
-        </Button>
+        <Stack sx={{gap: 2}}>
+          <Button variant="contained" color="primary" onClick={handleCreate}>
+            Create New Ingredient
+          </Button>
+          <SearchField onSearch={handleSearch} label="Search by Id" />
+        </Stack>
       )}
       <CustomDataTable
         data={ingredients}
