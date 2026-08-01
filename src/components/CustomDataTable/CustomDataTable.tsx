@@ -76,7 +76,11 @@ export const CustomDataTable = <T extends Identifiable>({
     if (columnId === 'stock') {
       return <>{ `${(row[columnId] as number).toFixed(2)} gms` }</>;
     }
-    return row[columnId] as ReactNode;
+    const value = row[columnId];
+    if (Array.isArray(value)) {
+      return <>{value.join(', ')}</>;
+    }
+    return value as ReactNode;
   };
 
   return (

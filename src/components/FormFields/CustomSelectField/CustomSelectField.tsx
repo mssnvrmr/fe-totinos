@@ -24,6 +24,7 @@ interface CustomSelectFieldProps<T extends FieldValues> {
   name: Path<T>;
   label: string;
   options: SelectOption[];
+  multiple?: boolean;
 }
 
 export const CustomSelectField = <T extends FieldValues>({
@@ -32,6 +33,7 @@ export const CustomSelectField = <T extends FieldValues>({
   errors,
   label,
   options,
+  multiple = false,
 }: CustomSelectFieldProps<T>) => {
   const error = errors[name];
   const labelId = `${String(name)}-label`;
@@ -43,7 +45,22 @@ export const CustomSelectField = <T extends FieldValues>({
       render={({ field }) => (
         <FormControl fullWidth required size="small" error={!!error}>
           <InputLabel id={labelId}>{label}</InputLabel>
-          <Select {...field} labelId={labelId} id={String(name)} label={label}>
+          <Select
+            {...field}
+            multiple={multiple}
+            value={field.value ?? (multiple ? [] : '')}
+            labelId={labelId}
+            id={String(name)}
+            label={label}
+            renderValue={
+              multiple
+                ? (selected) =>
+                    (selected as string[])
+                      .map((value) => options.find((option) => option.value === value)?.label ?? value)
+                      .join(', ')
+                : undefined
+            }
+          >
             {options.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
