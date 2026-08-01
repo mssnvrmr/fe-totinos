@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSignUp } from '../../api/users';
+import { useSignUp, useUpdateUser } from '../../api/users';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { useAuth } from '../Auth/AuthContext';
 import { PasswordField } from '../FormFields/PasswordField/PasswordField';
@@ -12,19 +12,25 @@ import { EmailField } from '../FormFields/EmailField/EmailField';
 import { CustomTextField } from '../FormFields/CustomTextField/CustomTextField';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
 import { createUserSchema, type CreateUserFormData } from './CreateUser.schema';
+import type { User } from '../../interfaces/User';
 
 interface CreateUserProps {
   submitLabel: string;
   onSuccess?: () => void;
+  user?: User;
 }
 
 export const CreateUser = ({
   submitLabel,
   onSuccess,
+  user,
 }: CreateUserProps) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { mutate, isPending } = useSignUp();
+  const { mutate: createUser, isPending: isCreating } = useSignUp();
+  const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
   const { role } = useAuth();
+  const isEditMode = !!user;
+  const isPending = isCreating || isUpdating;
 
   const {
     control,
@@ -33,24 +39,47 @@ export const CreateUser = ({
   } = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
-      username: '',
-      phone: '',
-      email: '',
+      id: user?.id ?? '',
+      username: user?.username ?? '',
+      phone: user?.phone ?? '',
+      email: user?.email ?? '',
       password: '',
-      role: UserRolesEnum.USER,
+      role: user?.role ?? UserRolesEnum.USER,
     },
   });
 
   const onSubmit = (data: CreateUserFormData) => {
-    mutate(data, {
+    if (isEditMode) {
+      const { password, ...rest } = data;
+      updateUser(
+        {
+          id: user.id,
+          username: rest.username,
+          phone: rest.phone,
+          email: rest.email,
+          role: rest.role,
+          ...(password ? { password } : {}),
+        },
+        {
+          onSuccess: () => {
+            enqueueSnackbar(`${data.username} was updated successfully`, { variant: 'success' });
+            onSuccess?.();
+          },
+          onError: (error) => {
+            enqueueSnackbar(`Update failed: ${error.message}`, { variant: 'error' });
+          },
+        },
+      );
+      return;
+    }
+
+    createUser(data, {
       onSuccess: () => {
-        enqueueSnackbar('Signed up successfully', { variant: 'success' });
-        if (onSuccess) {
-          onSuccess();
-        }
+        enqueueSnackbar(`${data.username} was created successfully`, { variant: 'success' });
+        onSuccess?.();
       },
       onError: (error) => {
-        enqueueSnackbar(`Actionfailed: ${error.message}`, { variant: 'error' });
+        enqueueSnackbar(`Creation failed: ${error.message}`, { variant: 'error' });
       },
     });
   };
@@ -62,6 +91,15 @@ export const CreateUser = ({
       noValidate
       sx={{ width: '100%', gap: 2 }}
     >
+      {isEditMode && (
+        <CustomTextField
+          name="id"
+          label="Id"
+          control={control}
+          errors={errors}
+          isDisabled={true}
+        />
+      )}
       <CustomTextField
         name="username"
         control={control}
@@ -73,7 +111,7 @@ export const CreateUser = ({
       />
       <PhoneField control={control} errors={errors} />
       <EmailField control={control} errors={errors} />
-      <PasswordField control={control} errors={errors} />
+      <PasswordField control={control} errors={errors} required={!isEditMode} />
       {role === UserRolesEnum.ADMIN && (
         <CustomSelectField
           name="role"

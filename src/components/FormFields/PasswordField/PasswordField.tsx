@@ -10,11 +10,13 @@ import {
 interface PasswordFieldProps<T extends FieldValues & { password: string }> {
   control: Control<T>;
   errors: FieldErrors<T>;
+  required?: boolean;
 }
 
 export const PasswordField = <T extends FieldValues & { password: string }>({
   control,
   errors,
+  required = true,
 }: PasswordFieldProps<T>) => {
   return (
     <Controller
@@ -23,7 +25,7 @@ export const PasswordField = <T extends FieldValues & { password: string }>({
       render={({ field }) => (
         <TextField
           {...field}
-          required
+          required={required}
           fullWidth
           id="password"
           name="password"
