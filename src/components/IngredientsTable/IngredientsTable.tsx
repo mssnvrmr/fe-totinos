@@ -1,109 +1,100 @@
 import React, { useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Stack,
-  IconButton,
-} from '@mui/material';
-import { MdModeEdit } from 'react-icons/md';
-import { FaTrashCan } from 'react-icons/fa6';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { useDeleteIngredient, useGetIngredients } from '../../api/ingredients';
 import { ingredientsTableColumns } from '../../constants/ingredients-table';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
-import { CreateIngredient } from '../IngredientForm/IngredientForm';
+import { IngredientForm } from '../IngredientForm/IngredientForm';
+import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
 import { useAuth } from '../Auth/AuthContext';
 import type { Ingredient } from '../../interfaces/Ingredient';
 
 export const IngredientsTable = () => {
-  const { data: ingredients } = useGetIngredients();
+  const { data: ingredients = [] } = useGetIngredients();
   const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | undefined>();
   const { role } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
 
-  const columns = ingredientsTableColumns.filter(
-    (column) => column.id !== 'actions' || isAdmin,
-  );
-
   const { mutate: deleteIngredient, isPending: isDeletingIngredient } = useDeleteIngredient();
+
+  const closeModal = () => {
+    setOpenModal(false);
+    setSelectedIngredient(undefined);
+  };
 
   const handleDelete = (id: string) => {
     deleteIngredient(id, {
       onSuccess: () => {
         enqueueSnackbar('Ingredient deleted successfully', { variant: 'success' });
+        closeDeleteModal();
       },
       onError: (error) => {
         enqueueSnackbar(`Deletion failed: ${error.message}`, { variant: 'error' });
+        closeDeleteModal();
       },
     });
   };
 
   const handleEdit = (id: string) => {
+    const ingredient = ingredients.find((item) => item.id === id);
+    if (!ingredient) return;
+    setSelectedIngredient(ingredient);
     setOpenModal(true);
-    console.log(id);
   };
 
-  const renderCell = (ingredient: Ingredient, columnId: (typeof columns)[number]['id']) => {
-    if (columnId === 'actions') {
-      return (
-        <Stack direction="row" sx={{ width: '100%', justifyContent: 'center', gap: 2 }}>
-          <IconButton color="secondary" onClick={() => handleEdit(ingredient.id)}>
-            <MdModeEdit />
-          </IconButton>
-          <IconButton
-            color="secondary"
-            onClick={() => handleDelete(ingredient.id)}
-            disabled={isDeletingIngredient}
-          >
-            <FaTrashCan />
-          </IconButton>
-        </Stack>
-      );
-    }
+  const handleCreate = () => {
+    setSelectedIngredient(undefined);
+    setOpenModal(true);
+  };
 
-    return ingredient[columnId];
+  const closeDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedIngredient(undefined);
   };
 
   return (
     <React.Fragment>
-      <CustomModal open={openModal} onClose={() => setOpenModal(false)} title="Create Ingredient">
-        <CreateIngredient submitLabel="Create" onSuccess={() => setOpenModal(false)} />
+      <CustomModal
+        open={openModal}
+        onClose={closeModal}
+        title={selectedIngredient ? 'Edit Ingredient' : 'Create Ingredient'}
+      >
+        <IngredientForm
+          key={selectedIngredient?.id ?? 'create'}
+          submitLabel={selectedIngredient ? 'Update' : 'Create'}
+          ingredient={selectedIngredient}
+          onSuccess={closeModal}
+        />
+      </CustomModal>
+      <CustomModal
+        open={openDeleteModal}
+        onClose={closeDeleteModal}
+        title="Delete Ingredient"
+      >
+        <Typography variant="body1">Are you sure you want to delete this ingredient?</Typography>
+        <Button variant="contained" color="primary" onClick={() => handleDelete(selectedIngredient?.id ?? '')} disabled={isDeletingIngredient}>
+          {isDeletingIngredient ? <CircularProgress size={20} /> : 'Delete'}
+        </Button>
       </CustomModal>
       {isAdmin && (
-        <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+        <Button variant="contained" color="primary" onClick={handleCreate}>
           Create New Ingredient
         </Button>
       )}
-      <TableContainer component="div" sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Table sx={{ width: { xs: '100%', sm: '60%', md: '40%' } }} size="small">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column.id} align={column.align}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {ingredients?.map((ingredient) => (
-              <TableRow key={ingredient.id}>
-                {columns.map((column) => (
-                  <TableCell key={column.id} align={column.align}>
-                    {renderCell(ingredient, column.id)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <CustomDataTable
+        data={ingredients}
+        columns={ingredientsTableColumns}
+        onDelete={(id) => {
+          setSelectedIngredient(ingredients.find((item) => item.id === id));
+          setOpenDeleteModal(true);
+        }}
+        onEdit={handleEdit}
+        isDeleting={isDeletingIngredient}
+        showActions={isAdmin}
+      />
     </React.Fragment>
   );
 };

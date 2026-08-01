@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import {
   Controller,
   type Control,
@@ -15,6 +15,8 @@ interface CustomTextFieldProps<T extends FieldValues> {
   type?: string;
   autoComplete?: string;
   autoFocus?: boolean;
+  startAdornment?: string | React.ReactNode;
+  endAdornment?: string | React.ReactNode;
 }
 
 export const CustomTextField = <T extends FieldValues>({
@@ -25,6 +27,8 @@ export const CustomTextField = <T extends FieldValues>({
   type,
   autoComplete,
   autoFocus,
+  startAdornment,
+  endAdornment,
 }: CustomTextFieldProps<T>) => {
   const error = errors[name];
 
@@ -35,6 +39,14 @@ export const CustomTextField = <T extends FieldValues>({
       render={({ field }) => (
         <TextField
           {...field}
+          slotProps={{
+            input: {
+              startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined,
+              endAdornment: endAdornment
+                ? <InputAdornment position="end">{endAdornment}</InputAdornment>
+                : undefined,
+            },
+          }}
           required
           fullWidth
           id={String(name)}
@@ -46,6 +58,14 @@ export const CustomTextField = <T extends FieldValues>({
           error={!!error}
           helperText={error?.message as string | undefined}
           size="small"
+          onChange={(event) => {
+            if (type === 'number') {
+              const value = event.target.value;
+              field.onChange(value === '' ? undefined : Number(value));
+              return;
+            }
+            field.onChange(event);
+          }}
         />
       )}
     />

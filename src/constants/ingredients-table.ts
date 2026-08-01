@@ -1,14 +1,9 @@
 import type { Ingredient } from '../interfaces/Ingredient';
+import type { DataTableColumn } from '../components/CustomDataTable/CustomDataTable';
 
 type IngredientField = Exclude<keyof Ingredient, 'id'>;
 
-export type IngredientsTableColumn = {
-  id: IngredientField | 'actions';
-  label: string;
-  align: 'left' | 'center' | 'right' | 'inherit' | 'justify';
-};
-
-export const ingredientsTableColumns: IngredientsTableColumn[] = [
+export const ingredientsTableColumns: DataTableColumn<IngredientField | 'actions'>[] = [
   {
     id: 'name',
     label: 'Name',
