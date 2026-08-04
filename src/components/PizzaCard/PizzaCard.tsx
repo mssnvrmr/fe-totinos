@@ -1,4 +1,5 @@
 import type { Pizza } from "../../interfaces/Pizza";
+import type { OrderItem } from "../../interfaces/Order";
 import {
   Card,
   CardContent,
@@ -21,15 +22,25 @@ import { itemFormSchema, type ItemFormData } from './ItemForm.schema';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
 import { NumberSpinner } from '../FormFields/NumberSpinner/NumberSpinner';
 import getPizzaIngredients from "../../utils/get-pizza-ingredients";
+import { useAuth } from "../Auth/AuthContext";
+import { UserRolesEnum } from "../../constants/user-roles";
 
-export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
+interface PizzaCardProps {
+  pizza: Pizza;
+  onAddItem: (item: OrderItem) => void;
+}
+
+export const PizzaCard = ({ pizza, onAddItem }: PizzaCardProps) => {
   const { data: extras = [] } = useGetIngredients();
   const pizzaIngredients = getPizzaIngredients(pizza, extras);
   const ingredientNamesString = pizzaIngredients.map((ingredient) => ingredient.name).join(', ');
+  const { role } = useAuth();
+  const isAdmin = role === UserRolesEnum.ADMIN;
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemFormSchema),
@@ -41,8 +52,20 @@ export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
   });
 
   const onSubmit = (data: ItemFormData) => {
-    console.log(data);
-  }
+    const selectedExtras = extras.filter((extra) => data.extras?.includes(extra.id));
+
+    onAddItem({
+      pizza,
+      quantity: data.quantity,
+      extras: selectedExtras,
+    });
+
+    reset({
+      pizza: pizza.id,
+      extras: [],
+      quantity: 1,
+    });
+  };
 
   return (
     <Card
@@ -56,19 +79,20 @@ export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
     >
       <CardHeader
         action={
-          <Stack direction="row" spacing={0.5}>
-            <Tooltip title="Edit">
-              <IconButton color="secondary">
-                <MdModeEditOutline size={15} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete">
-              <IconButton color="secondary">
-                <BsTrash3Fill size={15} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        }
+          isAdmin ? (
+            <Stack direction="row" spacing={0.5}>
+              <Tooltip title="Edit">
+                <IconButton color="secondary">
+                  <MdModeEditOutline size={15} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton color="secondary">
+                  <BsTrash3Fill size={15} />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          ) : null}
         title={pizza.name}
         sx={{
           bgcolor: 'primary.main',
@@ -93,31 +117,29 @@ export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
         <PiPizzaFill size={70} />
       </CardMedia>
       <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'space-between', height: '100%' }}>
-      <Stack sx={{ gap: 1, justifyContent: 'space-between', flex: 1 }}>
-        <Typography
-          variant="body2"
-          sx={{
-            flex: 1,
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {pizza.description}
-        </Typography>
-        <Stack sx={{ flex: 1 }}>
-          <Typography variant="body1" sx={{ color: 'secondary.main' }}>Ingredients</Typography>
-          <Typography variant="body2">
-            {ingredientNamesString}
+        <Stack sx={{ gap: 1, overflowY: 'auto' }}>
+          <Typography
+            variant="body2"
+            sx={{
+              flex: 1,
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {pizza.description}
           </Typography>
+          <Stack sx={{ flex: 1 }}>
+            <Typography variant="body1" sx={{ color: 'secondary.main' }}>Ingredients</Typography>
+            <Typography variant="body2">
+              {ingredientNamesString}
+            </Typography>
+          </Stack>
         </Stack>
         <Stack direction="row" sx={{ flex: 1, justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <Typography variant="h6" sx={{ color: 'secondary.main' }}>Price</Typography>
           <Typography variant="h6">${pizza.price.toFixed(2)}</Typography>
-        </Stack>
-        
-          
         </Stack>
         <Divider />
         <Stack
@@ -146,7 +168,20 @@ export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
             <Button fullWidth type="submit" variant="contained" color="primary" disabled={isSubmitting}>
               Add
             </Button>
-            <Button fullWidth type="button" variant="outlined" color="secondary" disabled={isSubmitting}>
+            <Button
+              fullWidth
+              type="button"
+              variant="outlined"
+              color="secondary"
+              disabled={isSubmitting}
+              onClick={() =>
+                reset({
+                  pizza: pizza.id,
+                  extras: [],
+                  quantity: 1,
+                })
+              }
+            >
               Clear
             </Button>
           </Stack>

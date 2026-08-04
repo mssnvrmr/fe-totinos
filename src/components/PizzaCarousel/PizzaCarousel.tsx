@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { IoChevronBackSharp, IoChevronForwardSharp } from 'react-icons/io5';
 import { PizzaCard } from '../PizzaCard/PizzaCard';
 import type { Pizza } from '../../interfaces/Pizza';
+import type { OrderItem } from '../../interfaces/Order';
 
 interface PizzaCarouselProps {
   pizzas: Pizza[];
+  onAddItem: (item: OrderItem) => void;
 }
 
-export const PizzaCarousel = ({ pizzas }: PizzaCarouselProps) => {
+export const PizzaCarousel = ({ pizzas, onAddItem }: PizzaCarouselProps) => {
   const [startIndex, setStartIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
   const cardsPerPage = 4;
@@ -44,7 +46,7 @@ export const PizzaCarousel = ({ pizzas }: PizzaCarouselProps) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '600px',
+        height: '100%',
       }}
     >
       <IconButton
@@ -89,7 +91,11 @@ export const PizzaCarousel = ({ pizzas }: PizzaCarouselProps) => {
                 }}
               >
                 {getVisiblePizzas(index).map((pizza, cardIndex) => (
-                  <PizzaCard key={`${pizza.id}-${cardIndex}`} pizza={pizza} />
+                  <PizzaCard
+                    key={`${pizza.id}-${cardIndex}`}
+                    pizza={pizza}
+                    onAddItem={onAddItem}
+                  />
                 ))}
               </Stack>
             </Slide>
