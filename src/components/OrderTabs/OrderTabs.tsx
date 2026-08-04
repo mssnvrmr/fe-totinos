@@ -1,5 +1,10 @@
 import { Tabs, Tab, Box } from '@mui/material';
 import React, { useState } from 'react';
+import { useGetOrders } from '../../api/orders';
+import { OrderStatusEnum } from '../../constants/order-status';
+import { Receipt } from '../Receipt/Receipt';
+import { UserRolesEnum } from '../../constants/user-roles';
+import { useAuth } from '../Auth/AuthContext';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -30,7 +35,13 @@ const a11yProps = (index: number) => {
   };
 }
 
-export const AdminOrders = () => {
+export const OrderTabs = () => {
+  const { isAuthenticated, role } = useAuth();
+  const isAdmin = role === UserRolesEnum.ADMIN;
+  const { data: orders = [] } = useGetOrders(isAuthenticated && isAdmin);
+  const activeOrders = orders?.filter((order) => order.status === OrderStatusEnum.ACTIVE);
+  const completedOrders = orders?.filter((order) => order.status === OrderStatusEnum.FINISHED);
+  const cancelledOrders = orders?.filter((order) => order.status === OrderStatusEnum.CANCELLED);  
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -38,22 +49,28 @@ export const AdminOrders = () => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '80%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="Admin orders tabs">
+        <Tabs value={value} onChange={handleChange} aria-label="Order tabs">
           <Tab label="Active" {...a11yProps(0)} />
-          <Tab label="Completed" {...a11yProps(1)} />
+          <Tab label="Finished" {...a11yProps(1)} />
           <Tab label="Cancelled" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        Item One
+        {activeOrders?.map((order) => (
+          <Receipt key={order.id} order={order} />
+        ))}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        {completedOrders?.map((order) => (
+          <Receipt key={order.id} order={order} />
+        ))}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Item Three
+        {cancelledOrders?.map((order) => (
+          <Receipt key={order.id} order={order} />
+        ))}
       </CustomTabPanel>
     </Box>
 

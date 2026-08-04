@@ -52,9 +52,17 @@ async function register(payload: RegisterPayload): Promise<RegisterResponse> {
 }
 
 async function getOrders(): Promise<Order[]> {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`);
-  const data = await res.json();
-  return data;
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+    method: "GET",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? "Failed to fetch orders");
+  }
+
+  return res.json();
 }
 
 async function updateOrder(payload: UpdatePayload): Promise<UpdateResponse> {
@@ -105,10 +113,11 @@ export function useDeleteOrder() {
   });
 }
 
-export function useGetOrders() {
+export function useGetOrders(enabled = true) {
   return useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
+    enabled,
   });
 }
 

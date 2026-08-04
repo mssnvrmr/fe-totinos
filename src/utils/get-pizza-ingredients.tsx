@@ -1,9 +1,11 @@
+import type { Ingredient } from "../interfaces/Ingredient";
 import type { Pizza } from "../interfaces/Pizza";
-import { useGetIngredientNames } from "../api/ingredients";
 
-const getPizzaIngredients = (pizza: Pizza) => {
-  const { data: ingredientNames } = useGetIngredientNames(pizza.ingredients);
-  return ingredientNames?.map(ingredient => ingredient.name);
+const getPizzaIngredients = (pizza: Pizza, ingredients: Ingredient[]): Ingredient[] => {
+  const byId = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient]));
+  return pizza.ingredients
+    .map((id) => byId.get(id))
+    .filter((ingredient): ingredient is Ingredient => ingredient !== undefined);
 };
 
 export default getPizzaIngredients;

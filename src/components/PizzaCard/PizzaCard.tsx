@@ -14,17 +14,18 @@ import {
 import { PiPizzaFill } from "react-icons/pi";
 import { MdModeEditOutline } from "react-icons/md";
 import { BsTrash3Fill } from "react-icons/bs";
-import { useGetIngredientNames, useGetIngredients } from "../../api/ingredients";
+import { useGetIngredients } from "../../api/ingredients";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { itemFormSchema, type ItemFormData } from './ItemForm.schema';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
 import { NumberSpinner } from '../FormFields/NumberSpinner/NumberSpinner';
+import getPizzaIngredients from "../../utils/get-pizza-ingredients";
 
 export const PizzaCard = ({ pizza }: { pizza: Pizza }) => {
-  const { data: ingredientNames } = useGetIngredientNames(pizza.ingredients);
-  const ingredientNamesString = ingredientNames?.map((ingredient) => ingredient.name).join(', ');
   const { data: extras = [] } = useGetIngredients();
+  const pizzaIngredients = getPizzaIngredients(pizza, extras);
+  const ingredientNamesString = pizzaIngredients.map((ingredient) => ingredient.name).join(', ');
 
   const {
     control,
