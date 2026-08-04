@@ -7,7 +7,7 @@ export const Main = ({ children }: { children: React.ReactNode }) => {
   return (
     <Stack sx={{ display: 'flex', height: '100vh', width: '100vw', justifyContent: 'flex-start' }}>
       <NavBar />
-      <Stack sx={{ width: '100%', flex: 1, p: 4, gap: 3, alignItems: 'center' }}>
+      <Stack sx={{ width: '100%', flex: 1, p: 4, gap: 3, alignItems: 'center', overflowY: 'auto' }}>
         {children}
       </Stack>
       <Footer />
