@@ -8,23 +8,26 @@ export const Home = () => {
     <Main>
       <PageHeader title="Home" icon={<ImHome3 />} />
       <Stack sx={{ gap: 2, width: '30%' }}>
-        <Typography variant="h5">Get started:</Typography>
+        <Typography variant="h5">Testing the app with different user roles:</Typography>
         <Stack sx={{ gap: 1 }}>
-          <Typography variant="body1">To test the app, you can log in as an admin with the following credentials:</Typography>
+          <Typography variant="body1"><span style={{ fontWeight: 'bold', color: '#FFB300' }}>As an Admin</span> log in with the following credentials:</Typography>
           <Card sx={{ p: 2, mx: 2 }}>
-            <Typography variant="body1">Email: admin@gmail.com</Typography>
-            <Typography variant="body1">Password: 12345678</Typography>
+            <Typography variant="body1"><b>Email:</b> admin@gmail.com</Typography>
+            <Typography variant="body1"><b>Password:</b> 12345678</Typography>
           </Card>
         </Stack>
         <Stack sx={{ gap: 1 }}>
-          <Typography variant="body1">As an user with orders already placed, you can log in with the following credentials:</Typography>
+          <Typography variant="body1"><span style={{ fontWeight: 'bold', color: '#FFB300' }}>As an User</span> with orders already placed, log in with the following credentials:</Typography>
           <Card sx={{ p: 2, mx: 2 }}>
-            <Typography variant="body1">Email: jan.doe@gmail.com</Typography>
-            <Typography variant="body1">Password: 12345678</Typography>
+            <Typography variant="body1"><b>Email:</b> jan.doe@gmail.com</Typography>
+            <Typography variant="body1"><b>Password:</b> 12345678</Typography>
           </Card>
         </Stack>
         <Stack sx={{ gap: 1 }}>
-          <Typography variant="body1">Or you can sign up with a new account to test the experience as a new user.</Typography>
+          <Typography variant="body1"><span style={{ fontWeight: 'bold', color: '#FFB300' }}>As a Guest</span> you can check the Menu, but won't be able to place an order.</Typography>
+        </Stack>
+        <Stack sx={{ gap: 1 }}>
+          <Typography variant="body1">Or you can sign up with a new account to test the experience as a <span style={{ fontWeight: 'bold', color: '#FFB300' }}>as new User</span>.</Typography>
         </Stack>
         <Typography variant="h5">Notes:</Typography>
         <Stack sx={{ gap: 1 }}>

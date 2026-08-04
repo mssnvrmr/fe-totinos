@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (newToken: string, name: string, role: UserRole) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(role);
   };
 
-  const logout = (): void => {
+  const logout = async (): Promise<void> => {
     clearStoredAuth();
     setToken(null);
     setUserName(null);

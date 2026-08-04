@@ -7,9 +7,10 @@ import { useAuth } from '../Auth/AuthContext';
 export const NavBar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin, logout, userName } = useAuth();
-  const handleLogout = () => {
-    logout();
-    navigate(ROUTES.HOME);
+  const handleLogout = async () => {
+    await logout().then(() => {
+      navigate(ROUTES.HOME);
+    });
   };
   const pages = [
     ...(isAuthenticated ? [{ name: 'Orders', path: ROUTES.ORDERS }] : []),
