@@ -65,6 +65,20 @@ async function getOrders(): Promise<Order[]> {
   return res.json();
 }
 
+async function getUserOrders(): Promise<Order[]> {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/user`, {
+    method: "GET",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? "Failed to fetch user orders");
+  }
+
+  return res.json();
+}
+
 async function updateOrder(payload: UpdatePayload): Promise<UpdateResponse> {
   const { id, ...body } = payload;
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${id}`, {
@@ -128,5 +142,13 @@ export function useUpdateOrder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
+  });
+}
+
+export function useGetUserOrders(enabled = true) {
+  return useQuery({
+    queryKey: ["userOrders"],
+    queryFn: getUserOrders,
+    enabled,
   });
 }

@@ -5,6 +5,7 @@ import { OrderStatusEnum } from '../../constants/order-status';
 import { Receipt } from '../Receipt/Receipt';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { useAuth } from '../Auth/AuthContext';
+import { useGetUserOrders } from '../../api/orders';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,7 +39,8 @@ const a11yProps = (index: number) => {
 export const OrderTabs = () => {
   const { isAuthenticated, role } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
-  const { data: orders = [] } = useGetOrders(isAuthenticated && isAdmin);
+  const { data: orders = [] } = isAdmin ? useGetOrders(isAuthenticated && isAdmin) : useGetUserOrders(isAuthenticated);
+
   const activeOrders = orders?.filter((order) => order.status === OrderStatusEnum.ACTIVE);
   const completedOrders = orders?.filter((order) => order.status === OrderStatusEnum.FINISHED);
   const cancelledOrders = orders?.filter((order) => order.status === OrderStatusEnum.CANCELLED);  
