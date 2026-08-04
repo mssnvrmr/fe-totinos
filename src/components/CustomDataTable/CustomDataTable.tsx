@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Table,
   TableBody,
@@ -6,12 +6,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   Stack,
   IconButton,
   Paper,
 } from '@mui/material';
 import { MdModeEdit } from 'react-icons/md';
 import { FaTrashCan } from 'react-icons/fa6';
+
+const ROWS_PER_PAGE = 10;
 
 export type DataTableColumn<TField extends string = string> = {
   id: TField;
@@ -42,8 +45,17 @@ export const CustomDataTable = <T extends Identifiable>({
   isDeleting = false,
   showActions = true,
 }: CustomDataTableProps<T>) => {
+  const [page, setPage] = useState(0);
+
   const visibleColumns = columns.filter(
     (column) => column.id !== 'actions' || showActions,
+  );
+
+  const maxPage = Math.max(0, Math.ceil(data.length / ROWS_PER_PAGE) - 1);
+  const currentPage = Math.min(page, maxPage);
+  const paginatedData = data.slice(
+    currentPage * ROWS_PER_PAGE,
+    currentPage * ROWS_PER_PAGE + ROWS_PER_PAGE,
   );
 
   const renderCell = (
@@ -86,7 +98,7 @@ export const CustomDataTable = <T extends Identifiable>({
   return (
     <TableContainer
       component={Paper}
-      sx={{ display: 'flex', justifyContent: 'center', width: { xs: '100%', sm: '60%', md: '40%' } }}
+      sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', sm: '60%', md: '40%' } }}
     >
       <Table size="small">
         <TableHead>
@@ -99,7 +111,7 @@ export const CustomDataTable = <T extends Identifiable>({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
+          {paginatedData.map((row) => (
             <TableRow key={row.id}>
               {visibleColumns.map((column) => (
                 <TableCell key={column.id} align={column.align ?? 'center'}>
@@ -110,6 +122,14 @@ export const CustomDataTable = <T extends Identifiable>({
           ))}
         </TableBody>
       </Table>
+      <TablePagination
+        component="div"
+        count={data.length}
+        page={currentPage}
+        onPageChange={(_, newPage) => setPage(newPage)}
+        rowsPerPage={ROWS_PER_PAGE}
+        rowsPerPageOptions={[ROWS_PER_PAGE]}
+      />
     </TableContainer>
   );
 };

@@ -9,6 +9,10 @@ export const customTheme: ThemeOptions = {
     secondary: {
       main: '#FFB300',
     },
+    common: {
+      black: '#000000',
+      white: '#ffffff',
+    },
   },
   components: {
     MuiOutlinedInput: {
