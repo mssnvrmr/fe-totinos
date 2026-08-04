@@ -5,9 +5,9 @@ import { Footer } from '../../Footer/Footer';
 
 export const Main = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Stack sx={{ display: 'flex', height: '100vh', width: '100vw', alignItems: 'center' }}>
+    <Stack sx={{ display: 'flex', height: '100vh', width: '100vw', justifyContent: 'flex-start' }}>
       <NavBar />
-      <Stack sx={{ width: '100%', flex: 1, p: 4, alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+      <Stack sx={{ width: '100%', flex: 1, p: 4, gap: 3, alignItems: 'center' }}>
         {children}
       </Stack>
       <Footer />

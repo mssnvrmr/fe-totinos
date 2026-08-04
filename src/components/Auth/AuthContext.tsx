@@ -18,16 +18,46 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const AUTH_KEYS = ['jwt_token', 'user_name', 'user_role'] as const;
+
+function clearStoredAuth(): void {
+  AUTH_KEYS.forEach((key) => localStorage.removeItem(key));
+}
+
+/** Tokens issued before role was added to the JWT payload fail admin checks with 403. */
+function readTokenPayload(token: string): { role?: string } | null {
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) return null;
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), '=');
+    return JSON.parse(atob(padded)) as { role?: string };
+  } catch {
+    return null;
+  }
+}
+
+function getValidStoredToken(): string | null {
+  const token = localStorage.getItem('jwt_token');
+  if (!token) return null;
+
+  const payload = readTokenPayload(token);
+  if (!payload?.role) {
+    clearStoredAuth();
+    return null;
+  }
+
+  return token;
+}
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('jwt_token');
-  });
-  const [userName, setUserName] = useState<string | null>(() => {
-    return localStorage.getItem('user_name');
-  });
-  const [role, setRole] = useState<UserRole | null>(() => {
-    return localStorage.getItem('user_role') as UserRole | null;
-  });
+  const [token, setToken] = useState<string | null>(getValidStoredToken);
+  const [userName, setUserName] = useState<string | null>(() =>
+    localStorage.getItem('user_name'),
+  );
+  const [role, setRole] = useState<UserRole | null>(
+    () => localStorage.getItem('user_role') as UserRole | null,
+  );
 
   const login = (newToken: string, name: string, role: UserRole): void => {
     localStorage.setItem('jwt_token', newToken);
@@ -39,9 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = (): void => {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('user_name');
-    localStorage.removeItem('user_role');
+    clearStoredAuth();
     setToken(null);
     setUserName(null);
     setRole(null);

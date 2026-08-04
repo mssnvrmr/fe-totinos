@@ -85,10 +85,16 @@ async function register(payload: RegisterPayload): Promise<RegisterResponse> {
 
 async function getUsers(): Promise<User[]> {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
-    headers: authHeaders(),
+    method: "GET",
+    headers: authHeaders({ "Content-Type": "application/json" }),
   });
-  const data = await res.json();
-  return data;
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? "Failed to fetch users");
+  }
+
+  return res.json();
 }
 
 async function updateUser(payload: UpdatePayload): Promise<UpdateResponse> {
@@ -140,10 +146,11 @@ export function useSignUp() {
   });
 }
 
-export function useGetUsers() {
+export function useGetUsers(enabled = true) {
   return useQuery({
     queryKey: ["users"],
-    queryFn: () => getUsers()
+    queryFn: () => getUsers(),
+    enabled,
   });
 }
 

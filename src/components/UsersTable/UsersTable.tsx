@@ -12,12 +12,12 @@ import type { User } from '../../interfaces/User';
 import { SearchField } from '../FormFields/SearchField/SearchField';
 
 export const UsersTable = () => {
-  const { data: users = [] } = useGetUsers();
+  const { role, isAuthenticated } = useAuth();
+  const isAdmin = role === UserRolesEnum.ADMIN;
+  const { data: users = [] } = useGetUsers(isAuthenticated && isAdmin);
   const [openModal, setOpenModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
-  const { role } = useAuth();
-  const isAdmin = role === UserRolesEnum.ADMIN;
 
   const { mutate: deleteUser, isPending: isDeletingUser } = useDeleteUser();
 
