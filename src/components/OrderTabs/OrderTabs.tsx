@@ -44,7 +44,7 @@ export const OrderTabs = () => {
   const cancelledOrders = orders?.filter((order) => order.status === OrderStatusEnum.CANCELLED);  
   const [value, setValue] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
