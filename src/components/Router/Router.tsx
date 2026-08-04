@@ -10,6 +10,7 @@ import { Users } from '../../pages/Users/Users';
 import PrivateRoute from './PrivateRoute';
 import { useAuth } from '../Auth/AuthContext';
 import { NotFound } from '../../pages/NotFound/NotFound';
+import { Profile } from '../../pages/Profile/Profile';
 
 export const Router = () => {
   const { isAuthenticated } = useAuth(); 
@@ -25,6 +26,7 @@ export const Router = () => {
           <Route path={ROUTES.ORDERS} element={<Orders />} />
           <Route path={ROUTES.INGREDIENTS} element={<Ingredients />} />
           <Route path={ROUTES.USERS} element={<Users />} />
+          <Route path={ROUTES.PROFILE} element={<Profile />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

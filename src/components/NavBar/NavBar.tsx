@@ -6,16 +6,17 @@ import { useAuth } from '../Auth/AuthContext';
 
 export const NavBar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout, userName } = useAuth();
+  const { isAuthenticated, isAdmin, logout, userName } = useAuth();
   const handleLogout = () => {
     logout();
     navigate(ROUTES.HOME);
   };
   const pages = [
-    { name: 'Orders', path: ROUTES.ORDERS },
+    ...(isAuthenticated ? [{ name: 'Orders', path: ROUTES.ORDERS }] : []),
     { name: 'Menu', path: ROUTES.MENU },
-    { name: 'Ingredients', path: ROUTES.INGREDIENTS },
-    { name: 'Users', path: ROUTES.USERS }
+    ...(isAuthenticated && isAdmin ? [{ name: 'Ingredients', path: ROUTES.INGREDIENTS }] : []),
+    ...(isAuthenticated && isAdmin ? [{ name: 'Users', path: ROUTES.USERS }] : []),
+    ...(isAuthenticated ? [{ name: 'Profile', path: ROUTES.PROFILE }] : [])
   ];
   const authPages = [
     { name: 'Log In', path: ROUTES.LOG_IN },

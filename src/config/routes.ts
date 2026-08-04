@@ -6,6 +6,7 @@ interface RouterMap {
   MENU: string;
   INGREDIENTS: string;
   USERS: string;
+  PROFILE: string;
 }
 
 export const ROUTES: RouterMap = {
@@ -16,4 +17,5 @@ export const ROUTES: RouterMap = {
   MENU: '/menu',
   INGREDIENTS: '/ingredients',
   USERS: '/users',
+  PROFILE: '/profile',
 }
