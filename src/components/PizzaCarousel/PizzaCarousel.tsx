@@ -8,9 +8,11 @@ import type { OrderItem } from '../../interfaces/Order';
 interface PizzaCarouselProps {
   pizzas: Pizza[];
   onAddItem: (item: OrderItem) => void;
+  onEditPizza: (pizza: Pizza) => void;
+  onDeletePizza: (pizza: Pizza) => void;
 }
 
-export const PizzaCarousel = ({ pizzas, onAddItem }: PizzaCarouselProps) => {
+export const PizzaCarousel = ({ pizzas, onAddItem, onEditPizza, onDeletePizza }: PizzaCarouselProps) => {
   const [startIndex, setStartIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left');
   const cardsPerPage = 4;
@@ -95,6 +97,8 @@ export const PizzaCarousel = ({ pizzas, onAddItem }: PizzaCarouselProps) => {
                     key={`${pizza.id}-${cardIndex}`}
                     pizza={pizza}
                     onAddItem={onAddItem}
+                    onEditPizza={onEditPizza}
+                    onDeletePizza={onDeletePizza}
                   />
                 ))}
               </Stack>

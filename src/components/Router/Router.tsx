@@ -9,6 +9,7 @@ import { Ingredients } from '../../pages/Ingredients/Ingredients';
 import { Users } from '../../pages/Users/Users';
 import PrivateRoute from './PrivateRoute';
 import { useAuth } from '../Auth/AuthContext';
+import { NotFound } from '../../pages/NotFound/NotFound';
 
 export const Router = () => {
   const { isAuthenticated } = useAuth(); 
@@ -19,13 +20,13 @@ export const Router = () => {
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.LOG_IN} element={<LogIn />} />
         <Route path={ROUTES.SIGN_UP} element={<SignUp />} />
-        <Route path={ROUTES.ORDERS} element={<Orders />} />
+        <Route path={ROUTES.MENU} element={<Menu />} />
         <Route element={<PrivateRoute isLoggedIn={isAuthenticated} />}>
-          <Route path={ROUTES.MENU} element={<Menu />} />
+          <Route path={ROUTES.ORDERS} element={<Orders />} />
           <Route path={ROUTES.INGREDIENTS} element={<Ingredients />} />
           <Route path={ROUTES.USERS} element={<Users />} />
         </Route>
-        <Route path="*" element={<Navigate replace to={ROUTES.HOME} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter >
   )

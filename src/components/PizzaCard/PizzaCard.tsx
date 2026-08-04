@@ -11,6 +11,7 @@ import {
   Tooltip,
   Divider,
   Button,
+  Link,
 } from '@mui/material';
 import { PiPizzaFill } from "react-icons/pi";
 import { MdModeEditOutline } from "react-icons/md";
@@ -24,17 +25,20 @@ import { NumberSpinner } from '../FormFields/NumberSpinner/NumberSpinner';
 import getPizzaIngredients from "../../utils/get-pizza-ingredients";
 import { useAuth } from "../Auth/AuthContext";
 import { UserRolesEnum } from "../../constants/user-roles";
+import { ROUTES } from "../../config/routes";
 
 interface PizzaCardProps {
   pizza: Pizza;
   onAddItem: (item: OrderItem) => void;
+  onEditPizza: (pizza: Pizza) => void;
+  onDeletePizza: (pizza: Pizza) => void;
 }
 
-export const PizzaCard = ({ pizza, onAddItem }: PizzaCardProps) => {
+export const PizzaCard = ({ pizza, onAddItem, onEditPizza, onDeletePizza }: PizzaCardProps) => {
   const { data: extras = [] } = useGetIngredients();
   const pizzaIngredients = getPizzaIngredients(pizza, extras);
   const ingredientNamesString = pizzaIngredients.map((ingredient) => ingredient.name).join(', ');
-  const { role } = useAuth();
+  const { isAuthenticated, role } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
 
   const {
@@ -82,12 +86,12 @@ export const PizzaCard = ({ pizza, onAddItem }: PizzaCardProps) => {
           isAdmin ? (
             <Stack direction="row" spacing={0.5}>
               <Tooltip title="Edit">
-                <IconButton color="secondary">
+                <IconButton color="secondary" onClick={() => onEditPizza(pizza)}>
                   <MdModeEditOutline size={15} />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete">
-                <IconButton color="secondary">
+                <IconButton color="secondary" onClick={() => onDeletePizza(pizza)}>
                   <BsTrash3Fill size={15} />
                 </IconButton>
               </Tooltip>
@@ -142,52 +146,54 @@ export const PizzaCard = ({ pizza, onAddItem }: PizzaCardProps) => {
           <Typography variant="h6">${pizza.price.toFixed(2)}</Typography>
         </Stack>
         <Divider />
-        <Stack
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
-          sx={{ width: '100%', gap: 2 }}
-        >
-          <CustomSelectField
-            name="extras"
-            label="Add-ons"
-            control={control}
-            errors={errors}
-            multiple
-            options={extras.map((extra) => ({
-              value: extra.id,
-              label: extra.name,
-            }))}
-          />
-          <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body2">Quantity</Typography>
-            <NumberSpinner control={control} errors={errors} name="quantity" label="Quantity" min={1} step={1} />
+        {isAuthenticated ? (
+          <Stack
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            sx={{ width: '100%', gap: 2 }}
+          >
+            <CustomSelectField
+              name="extras"
+              label="Add-ons"
+              control={control}
+              errors={errors}
+              multiple
+              options={extras.map((extra) => ({
+                value: extra.id,
+                label: extra.name,
+              }))}
+            />
+            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="body2">Quantity</Typography>
+              <NumberSpinner control={control} errors={errors} name="quantity" label="Quantity" min={1} step={1} />
+            </Stack>
+
+            <Stack direction="row" spacing={2}>
+              <Button fullWidth type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+                Add
+              </Button>
+              <Button
+                fullWidth
+                type="button"
+                variant="outlined"
+                color="secondary"
+                disabled={isSubmitting}
+                onClick={() =>
+                  reset({
+                    pizza: pizza.id,
+                    extras: [],
+                    quantity: 1,
+                  })
+                }
+              >
+                Clear
+              </Button>
+            </Stack>
           </Stack>
-
-          <Stack direction="row" spacing={2}>
-            <Button fullWidth type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-              Add
-            </Button>
-            <Button
-              fullWidth
-              type="button"
-              variant="outlined"
-              color="secondary"
-              disabled={isSubmitting}
-              onClick={() =>
-                reset({
-                  pizza: pizza.id,
-                  extras: [],
-                  quantity: 1,
-                })
-              }
-            >
-              Clear
-            </Button>
-          </Stack>
-
-        </Stack>
-
+        ) : (
+          <Typography align="center" variant="body2">Hungry? <Link href={ROUTES.LOG_IN} color="secondary">Log in</Link> or <Link href={ROUTES.SIGN_UP} color="secondary">Sign up</Link> to add pizzas to your order</Typography>
+          )}
       </CardContent>
     </Card>
   );
