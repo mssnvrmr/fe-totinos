@@ -69,11 +69,18 @@ async function getOrders(): Promise<ApiOrder[]> {
   return res.json();
 }
 
-async function getUserOrders(): Promise<ApiOrder[]> {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/user`, {
-    method: "GET",
-    headers: authHeaders({ "Content-Type": "application/json" }),
-  });
+async function getUserOrders(userEmail: string): Promise<ApiOrder[]> {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/orders/user/${encodeURIComponent(userEmail)}`,
+    {
+      method: "GET",
+      headers: authHeaders({ "Content-Type": "application/json" }),
+    },
+  );
+  
+  if (res.status === 404) {
+    return [];
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -203,11 +210,11 @@ export function useUpdateOrder() {
   });
 }
 
-export function useGetUserOrders(enabled = true) {
+export function useGetUserOrders(userEmail: string | null, enabled = true) {
   const { data, ...rest } = useQuery({
-    queryKey: ["userOrders"],
-    queryFn: getUserOrders,
-    enabled,
+    queryKey: ["userOrders", userEmail],
+    queryFn: () => getUserOrders(userEmail as string),
+    enabled: enabled && !!userEmail,
   });
 
   return { ...rest, data: useHydratedOrders(data ?? NO_ORDERS) };

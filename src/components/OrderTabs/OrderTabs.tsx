@@ -1,11 +1,10 @@
 import { Tabs, Tab, Box, Stack } from '@mui/material';
 import React, { useState } from 'react';
-import { useGetOrders } from '../../api/orders';
+import { useGetOrders, useGetUserOrders } from '../../api/orders';
 import { OrderStatusEnum } from '../../constants/order-status';
 import { Receipt } from '../Receipt/Receipt';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { useAuth } from '../Auth/AuthContext';
-import { useGetUserOrders } from '../../api/orders';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,10 +36,10 @@ const a11yProps = (index: number) => {
 }
 
 export const OrderTabs = () => {
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, role, userEmail } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
   const { data: allOrders } = useGetOrders(isAuthenticated && isAdmin);
-  const { data: userOrders } = useGetUserOrders(isAuthenticated && !isAdmin);
+  const { data: userOrders } = useGetUserOrders(userEmail, isAuthenticated && !isAdmin);
   const orders = isAdmin ? allOrders : userOrders;
 
   const activeOrders = orders?.filter((order) => order.status === OrderStatusEnum.ACTIVE);

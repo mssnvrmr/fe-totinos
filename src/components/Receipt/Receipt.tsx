@@ -2,6 +2,10 @@ import { Typography, Stack, Button } from "@mui/material"
 import type { Order, OrderItem } from "../../interfaces/Order"
 import { OrderStatusEnum } from "../../constants/order-status"
 import Barcode from "react-barcode";
+import { UserRolesEnum } from "../../constants/user-roles";
+import { useAuth } from "../Auth/AuthContext";
+import { useUpdateOrder } from "../../api/orders";
+import { useSnackbar } from "notistack";
 
 const formatPrice = (price: number) => `$${price.toFixed(2)}`;
 
@@ -25,6 +29,43 @@ const OrderItemRow = ({ item }: { item: OrderItem }) => {
 }
 
 export const Receipt = ({ order }: { order: Order }) => {
+  const { role } = useAuth();
+  const isAdmin = role === UserRolesEnum.ADMIN;
+  const { enqueueSnackbar } = useSnackbar();
+  const { mutate: updateOrder, isPending: isUpdatingOrder } = useUpdateOrder();
+
+  const handleCompleteOrder = (orderId: string) => {
+    updateOrder({
+      id: orderId,
+      pizzas: order.items.map((item) => item.pizza),
+      note: order.note,
+      totalPrice: order.totalPrice,
+      status: OrderStatusEnum.FINISHED,
+    }, {
+      onSuccess: () => {
+        enqueueSnackbar("Order completed successfully", { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar("Failed to complete order", { variant: "error" });
+      },
+    });
+  }
+  const handleCancelOrder = (orderId: string) => {
+    updateOrder({
+      id: orderId,
+      pizzas: order.items.map((item) => item.pizza),
+      note: order.note,
+      totalPrice: order.totalPrice,
+      status: OrderStatusEnum.CANCELLED,
+    }, {
+      onSuccess: () => {
+        enqueueSnackbar("Order cancelled successfully", { variant: "success" });
+      },
+      onError: () => {
+        enqueueSnackbar("Failed to cancel order", { variant: "error" });
+      },
+    });
+  }
   return (
     <Stack sx={{
       backgroundColor: 'white',
@@ -76,8 +117,8 @@ export const Receipt = ({ order }: { order: Order }) => {
       )}
       {order.status === OrderStatusEnum.ACTIVE && (
         <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1 }}>
-          <Button size="small" variant="contained" color="primary">Complete</Button>
-          <Button size="small" variant="outlined" color="error">Cancel</Button>
+          {isAdmin && <Button size="small" variant="contained" color="primary" onClick={() => handleCompleteOrder(order.id)} disabled={isUpdatingOrder}>Complete</Button>}
+          <Button size="small" variant="outlined" color="error" onClick={() => handleCancelOrder(order.id)} disabled={isUpdatingOrder}>Cancel</Button>
         </Stack>
       )}
       {order.status === OrderStatusEnum.FINISHED && (
