@@ -3,6 +3,7 @@ import { MdRestaurantMenu } from "react-icons/md";
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { PizzaCarousel } from '../../components/PizzaCarousel/PizzaCarousel';
 import { useDeletePizza, useGetPizzas } from '../../api/pizza';
+import { useGetIngredients } from '../../api/ingredients';
 import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 import type { OrderItem } from '../../interfaces/Order';
 import { useState } from 'react';
@@ -13,9 +14,11 @@ import { PizzaForm } from '../../components/PizzaForm/PizzaForm';
 import { enqueueSnackbar } from 'notistack';
 import { useAuth } from '../../components/Auth/AuthContext';
 import { UserRolesEnum } from '../../constants/user-roles';
+import { getInsufficientStockIngredients } from '../../utils/calculate-stock';
 
 export const Menu = () => {
   const { data: pizzas = [] } = useGetPizzas();
+  const { data: ingredients = [] } = useGetIngredients();
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [notes, setNotes] = useState('');
   const [isPizzaFormModalOpen, setIsPizzaFormModalOpen] = useState(false);
@@ -25,8 +28,20 @@ export const Menu = () => {
   const { role } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
 
-  const handleAddItem = (item: OrderItem) => {
-    setOrderItems((prev) => [...prev, item]);
+  const handleAddItem = (item: OrderItem): boolean => {
+    const nextItems = [...orderItems, item];
+    const insufficient = getInsufficientStockIngredients(nextItems, ingredients);
+
+    if (insufficient.length > 0) {
+      enqueueSnackbar(
+        `Not enough stock for: ${insufficient.join(', ')}`,
+        { variant: 'error' },
+      );
+      return false;
+    }
+
+    setOrderItems(nextItems);
+    return true;
   };
 
   const handleClearOrder = () => {

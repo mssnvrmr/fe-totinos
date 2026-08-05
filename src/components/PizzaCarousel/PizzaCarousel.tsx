@@ -7,7 +7,7 @@ import type { OrderItem } from '../../interfaces/Order';
 
 interface PizzaCarouselProps {
   pizzas: Pizza[];
-  onAddItem: (item: OrderItem) => void;
+  onAddItem: (item: OrderItem) => boolean;
   onEditPizza: (pizza: Pizza) => void;
   onDeletePizza: (pizza: Pizza) => void;
 }

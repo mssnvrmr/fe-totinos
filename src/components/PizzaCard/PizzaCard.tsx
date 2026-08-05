@@ -29,7 +29,7 @@ import { ROUTES } from "../../config/routes";
 
 interface PizzaCardProps {
   pizza: Pizza;
-  onAddItem: (item: OrderItem) => void;
+  onAddItem: (item: OrderItem) => boolean;
   onEditPizza: (pizza: Pizza) => void;
   onDeletePizza: (pizza: Pizza) => void;
 }
@@ -58,11 +58,13 @@ export const PizzaCard = ({ pizza, onAddItem, onEditPizza, onDeletePizza }: Pizz
   const onSubmit = (data: ItemFormData) => {
     const selectedExtras = extras.filter((extra) => data.extras?.includes(extra.id));
 
-    onAddItem({
+    const added = onAddItem({
       pizza,
       quantity: data.quantity,
       extras: selectedExtras,
     });
+
+    if (!added) return;
 
     reset({
       pizza: pizza.id,
