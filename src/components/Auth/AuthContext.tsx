@@ -4,11 +4,13 @@ import { UserRolesEnum, type UserRole } from '../../constants/user-roles';
 
 interface AuthContextType {
   token: string | null;
+  userId: string | null;
   userName: string | null;
   role: UserRole | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (newToken: string, name: string, role: UserRole) => void;
+  updateUserName: (name: string) => void;
   logout: () => Promise<void>;
 }
 
@@ -24,14 +26,16 @@ function clearStoredAuth(): void {
   AUTH_KEYS.forEach((key) => localStorage.removeItem(key));
 }
 
+type TokenPayload = { id?: string; role?: string };
+
 /** Tokens issued before role was added to the JWT payload fail admin checks with 403. */
-function readTokenPayload(token: string): { role?: string } | null {
+function readTokenPayload(token: string): TokenPayload | null {
   try {
     const [, payload] = token.split('.');
     if (!payload) return null;
     const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
     const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), '=');
-    return JSON.parse(atob(padded)) as { role?: string };
+    return JSON.parse(atob(padded)) as TokenPayload;
   } catch {
     return null;
   }
@@ -48,6 +52,11 @@ function getValidStoredToken(): string | null {
   }
 
   return token;
+}
+
+function getUserIdFromToken(token: string | null): string | null {
+  if (!token) return null;
+  return readTokenPayload(token)?.id ?? null;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -68,6 +77,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(role);
   };
 
+  const updateUserName = (name: string): void => {
+    localStorage.setItem('user_name', name);
+    setUserName(name);
+  };
+
   const logout = async (): Promise<void> => {
     clearStoredAuth();
     setToken(null);
@@ -75,12 +89,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setRole(null);
   };
 
+  const userId = getUserIdFromToken(token);
   const isAuthenticated = !!token;
   const isAdmin = role === UserRolesEnum.ADMIN;
 
   return (
     <AuthContext.Provider
-      value={{ token, userName, role, isAuthenticated, isAdmin, login, logout }}
+      value={{
+        token,
+        userId,
+        userName,
+        role,
+        isAuthenticated,
+        isAdmin,
+        login,
+        updateUserName,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

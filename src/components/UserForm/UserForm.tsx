@@ -11,20 +11,20 @@ import { PhoneField } from '../FormFields/PhoneField/PhoneField';
 import { EmailField } from '../FormFields/EmailField/EmailField';
 import { CustomTextField } from '../FormFields/CustomTextField/CustomTextField';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
-import { createUserSchema, type CreateUserFormData } from './CreateUser.schema';
+import { createUserSchema, type CreateUserFormData } from './UserForm.schema';
 import type { User } from '../../interfaces/User';
 
-interface CreateUserProps {
+interface UserFormProps {
   submitLabel: string;
-  onSuccess?: () => void;
+  onSuccess?: (username?: string) => void;
   user?: User;
 }
 
-export const CreateUser = ({
+export const UserForm = ({
   submitLabel,
   onSuccess,
   user,
-}: CreateUserProps) => {
+}: UserFormProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { mutate: createUser, isPending: isCreating } = useSignUp();
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
@@ -63,7 +63,7 @@ export const CreateUser = ({
         {
           onSuccess: () => {
             enqueueSnackbar(`${data.username} was updated successfully`, { variant: 'success' });
-            onSuccess?.();
+            onSuccess?.(data.username);
           },
           onError: (error) => {
             enqueueSnackbar(`Update failed: ${error.message}`, { variant: 'error' });
@@ -76,7 +76,7 @@ export const CreateUser = ({
     createUser(data, {
       onSuccess: () => {
         enqueueSnackbar(`${data.username} was created successfully`, { variant: 'success' });
-        onSuccess?.();
+        onSuccess?.(data.username);
       },
       onError: (error) => {
         enqueueSnackbar(`Creation failed: ${error.message}`, { variant: 'error' });

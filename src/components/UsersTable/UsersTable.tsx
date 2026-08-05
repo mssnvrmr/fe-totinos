@@ -5,7 +5,7 @@ import { useDeleteUser, useGetUsers } from '../../api/users';
 import { usersTableColumns } from '../../constants/users-table';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
-import { CreateUser } from '../CreateUser/CreateUser';
+import { UserForm } from '../UserForm/UserForm';
 import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
 import { useAuth } from '../Auth/AuthContext';
 import type { User } from '../../interfaces/User';
@@ -73,7 +73,7 @@ export const UsersTable = () => {
         onClose={closeModal}
         title={selectedUser ? 'Edit User' : 'Create User'}
       >
-        <CreateUser
+        <UserForm
           key={selectedUser?.id ?? 'create'}
           submitLabel={selectedUser ? 'Update' : 'Create'}
           user={selectedUser}

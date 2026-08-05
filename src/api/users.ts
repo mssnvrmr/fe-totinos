@@ -97,6 +97,20 @@ async function getUsers(): Promise<User[]> {
   return res.json();
 }
 
+async function getUser(id: string): Promise<User> {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
+    method: "GET",
+    headers: authHeaders({ "Content-Type": "application/json" }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message ?? "Failed to fetch user");
+  }
+
+  return res.json();
+}
+
 async function updateUser(payload: UpdatePayload): Promise<UpdateResponse> {
   const { id, ...body } = payload;
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
@@ -154,12 +168,23 @@ export function useGetUsers(enabled = true) {
   });
 }
 
+export function useGetUser(id: string | null, enabled = true) {
+  return useQuery({
+    queryKey: ["users", id],
+    queryFn: () => getUser(id!),
+    enabled: enabled && !!id,
+  });
+}
+
 export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateUser,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (variables.id) {
+        queryClient.invalidateQueries({ queryKey: ["users", variables.id] });
+      }
     },
   });
 }
