@@ -91,15 +91,6 @@ export const UserForm = ({
       noValidate
       sx={{ width: '100%', gap: 2 }}
     >
-      {isEditMode && (
-        <CustomTextField
-          name="id"
-          label="Id"
-          control={control}
-          errors={errors}
-          isDisabled={true}
-        />
-      )}
       <CustomTextField
         name="username"
         control={control}
