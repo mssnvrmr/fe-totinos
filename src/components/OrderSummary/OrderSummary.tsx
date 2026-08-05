@@ -2,9 +2,11 @@ import { Stack, Typography, Button, Divider, TextField, IconButton, CircularProg
 import type { OrderItem } from "../../interfaces/Order"
 import { IoCloseSharp } from "react-icons/io5";
 import { useCreateOrder } from "../../api/orders";
+import { useGetIngredients } from "../../api/ingredients";
 import { OrderStatusEnum } from "../../constants/order-status";
 import { useAuth } from "../Auth/AuthContext";
 import { useSnackbar } from "notistack";
+import { getInsufficientStockIngredients } from "../../utils/calculate-stock";
 
 const getItemUnitPrice = (item: OrderItem) =>
   item.pizza.price + item.extras.reduce((sum, extra) => sum + extra.price, 0);
@@ -20,6 +22,7 @@ interface OrderSummaryProps {
 export const OrderSummary = ({ orderItems, notes, onClearOrder, onRemoveItemFromOrder, onUpdateNotes }: OrderSummaryProps) => {
   const { userEmail } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+  const { data: ingredients = [] } = useGetIngredients();
   const { mutate: createOrder, isPending } = useCreateOrder();
 
   const total = orderItems.reduce(
@@ -30,6 +33,15 @@ export const OrderSummary = ({ orderItems, notes, onClearOrder, onRemoveItemFrom
   const handlePlaceOrder = () => {
     if (!userEmail) {
       enqueueSnackbar('You must be logged in to place an order', { variant: 'error' });
+      return;
+    }
+
+    const insufficient = getInsufficientStockIngredients(orderItems, ingredients);
+    if (insufficient.length > 0) {
+      enqueueSnackbar(
+        `Not enough stock for: ${insufficient.join(', ')}`,
+        { variant: 'error' },
+      );
       return;
     }
 
