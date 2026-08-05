@@ -19,10 +19,10 @@ type RegisterResponse = {
 
 type UpdatePayload = {
   id: string;
-  pizzas: Pizza[];
-  note: string;
-  totalPrice: number;
-  status: OrderStatus;
+  updatedByUserEmail: string;
+  items?: ApiOrderItem[];
+  note?: string;
+  status?: OrderStatus;
 };
 
 type UpdateResponse = {
@@ -77,7 +77,7 @@ async function getUserOrders(userEmail: string): Promise<ApiOrder[]> {
       headers: authHeaders({ "Content-Type": "application/json" }),
     },
   );
-  
+
   if (res.status === 404) {
     return [];
   }
@@ -206,6 +206,7 @@ export function useUpdateOrder() {
     mutationFn: updateOrder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["userOrders"] });
     },
   });
 }

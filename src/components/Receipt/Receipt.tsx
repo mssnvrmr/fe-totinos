@@ -1,5 +1,5 @@
 import { Typography, Stack, Button } from "@mui/material"
-import type { Order, OrderItem } from "../../interfaces/Order"
+import type { Order, OrderItem, OrderStatus } from "../../interfaces/Order"
 import { OrderStatusEnum } from "../../constants/order-status"
 import Barcode from "react-barcode";
 import { UserRolesEnum } from "../../constants/user-roles";
@@ -29,43 +29,46 @@ const OrderItemRow = ({ item }: { item: OrderItem }) => {
 }
 
 export const Receipt = ({ order }: { order: Order }) => {
-  const { role } = useAuth();
+  const { role, userEmail } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
   const { enqueueSnackbar } = useSnackbar();
   const { mutate: updateOrder, isPending: isUpdatingOrder } = useUpdateOrder();
 
-  const handleCompleteOrder = (orderId: string) => {
+  const changeOrderStatus = (
+    status: OrderStatus,
+    successMessage: string,
+    errorMessage: string,
+  ) => {
+    if (!userEmail) {
+      enqueueSnackbar(errorMessage, { variant: "error" });
+      return;
+    }
+
     updateOrder({
-      id: orderId,
-      pizzas: order.items.map((item) => item.pizza),
-      note: order.note,
-      totalPrice: order.totalPrice,
-      status: OrderStatusEnum.FINISHED,
+      id: order.id,
+      updatedByUserEmail: userEmail,
+      status,
     }, {
       onSuccess: () => {
-        enqueueSnackbar("Order completed successfully", { variant: "success" });
+        enqueueSnackbar(successMessage, { variant: "success" });
       },
       onError: () => {
-        enqueueSnackbar("Failed to complete order", { variant: "error" });
+        enqueueSnackbar(errorMessage, { variant: "error" });
       },
     });
   }
-  const handleCancelOrder = (orderId: string) => {
-    updateOrder({
-      id: orderId,
-      pizzas: order.items.map((item) => item.pizza),
-      note: order.note,
-      totalPrice: order.totalPrice,
-      status: OrderStatusEnum.CANCELLED,
-    }, {
-      onSuccess: () => {
-        enqueueSnackbar("Order cancelled successfully", { variant: "success" });
-      },
-      onError: () => {
-        enqueueSnackbar("Failed to cancel order", { variant: "error" });
-      },
-    });
-  }
+
+  const handleCompleteOrder = () => changeOrderStatus(
+    OrderStatusEnum.FINISHED,
+    "Order completed successfully",
+    "Failed to complete order",
+  );
+
+  const handleCancelOrder = () => changeOrderStatus(
+    OrderStatusEnum.CANCELLED,
+    "Order cancelled successfully",
+    "Failed to cancel order",
+  );
   return (
     <Stack sx={{
       backgroundColor: 'white',
@@ -90,9 +93,10 @@ export const Receipt = ({ order }: { order: Order }) => {
       }
     }}>
       <Stack>
-        <Typography variant="body1">#{order.id}</Typography>
-        <Typography variant="body1">By: {order.orderedByUserEmail}</Typography>
-        <Typography variant="body1">Date: {new Date(order.createdAt).toLocaleString()}</Typography>
+        <Typography variant="body1"><b>#</b> {order.id}</Typography>
+        <Typography variant="body1"><b>Placed:</b> {order.orderedByUserEmail}</Typography>
+        {order.status !== OrderStatusEnum.ACTIVE && <Typography variant="body1"><b>Updated:</b> {order.updatedByUserEmail}</Typography>}
+        <Typography variant="body1"><b>Date:</b> {new Date(order.createdAt).toLocaleString()}</Typography>
       </Stack>
       <Stack sx={{ borderBottom: '1px dashed #000', borderTop: '1px dashed #000', padding: '0.3rem 0' }}>
         <Typography align="center" variant="h6">Order</Typography>
@@ -107,8 +111,8 @@ export const Receipt = ({ order }: { order: Order }) => {
         ))}
       </Stack>
       <Stack direction="row" sx={{ justifyContent: 'space-between', borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
-        <Typography variant="h5">Total</Typography>
-        <Typography variant="h5">{formatPrice(order.totalPrice)}</Typography>
+        <Typography variant="h5"><b>Total:</b></Typography>
+        <Typography variant="h5"><b>{formatPrice(order.totalPrice)}</b></Typography>
       </Stack>
       {order.note && (
         <Stack sx={{ borderTop: '1px dashed #000', paddingTop: '0.3rem', flexGrow: 1}}>
@@ -117,12 +121,12 @@ export const Receipt = ({ order }: { order: Order }) => {
       )}
       {order.status === OrderStatusEnum.ACTIVE && (
         <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1 }}>
-          {isAdmin && <Button size="small" variant="contained" color="primary" onClick={() => handleCompleteOrder(order.id)} disabled={isUpdatingOrder}>Complete</Button>}
-          <Button size="small" variant="outlined" color="error" onClick={() => handleCancelOrder(order.id)} disabled={isUpdatingOrder}>Cancel</Button>
+          {isAdmin && <Button size="small" variant="contained" color="primary" onClick={handleCompleteOrder} disabled={isUpdatingOrder}>Complete</Button>}
+          <Button size="small" variant="outlined" color="error" onClick={handleCancelOrder} disabled={isUpdatingOrder}>Cancel</Button>
         </Stack>
       )}
       {order.status === OrderStatusEnum.FINISHED && (
-        <Stack sx={{ alignItems: 'center' }}>
+        <Stack sx={{ alignItems: 'center', overflow: 'hidden' }}>
           <Barcode value={order.id} width={1} height={40} displayValue={false} />
         </Stack>
       )}
