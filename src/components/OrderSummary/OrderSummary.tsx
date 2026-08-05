@@ -41,7 +41,7 @@ export const OrderSummary = ({ orderItems, notes, onClearOrder, onRemoveItemFrom
                   {item.extras.map((extra) => (
                     <Stack key={extra.id} direction="row" sx={{ justifyContent: 'space-between', px: 1 }}>
                       <Typography variant="body2">{extra.name}</Typography>
-                      <Typography variant="body2">${extra.price.toFixed(2)}</Typography>
+                      <Typography variant="body2">${(extra.price * item.quantity).toFixed(2)}</Typography>
                     </Stack>
                   ))}
                 </Stack>
