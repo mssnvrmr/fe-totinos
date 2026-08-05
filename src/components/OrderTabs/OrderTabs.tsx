@@ -39,7 +39,9 @@ const a11yProps = (index: number) => {
 export const OrderTabs = () => {
   const { isAuthenticated, role } = useAuth();
   const isAdmin = role === UserRolesEnum.ADMIN;
-  const { data: orders = [] } = isAdmin ? useGetOrders(isAuthenticated && isAdmin) : useGetUserOrders(isAuthenticated);
+  const { data: allOrders } = useGetOrders(isAuthenticated && isAdmin);
+  const { data: userOrders } = useGetUserOrders(isAuthenticated && !isAdmin);
+  const orders = isAdmin ? allOrders : userOrders;
 
   const activeOrders = orders?.filter((order) => order.status === OrderStatusEnum.ACTIVE);
   const completedOrders = orders?.filter((order) => order.status === OrderStatusEnum.FINISHED);

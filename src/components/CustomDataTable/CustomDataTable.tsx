@@ -14,7 +14,7 @@ import {
 import { MdModeEdit } from 'react-icons/md';
 import { FaTrashCan } from 'react-icons/fa6';
 
-const ROWS_PER_PAGE = 10;
+const ROWS_PER_PAGE = 7;
 
 export type DataTableColumn<TField extends string = string> = {
   id: TField;

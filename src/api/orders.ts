@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Order, OrderStatus } from "../interfaces/Order";
+import { useMemo } from "react";
+import type { ApiOrder, Order, OrderItem, OrderStatus } from "../interfaces/Order";
 import type { Pizza } from "../interfaces/Pizza";
+import type { Ingredient } from "../interfaces/Ingredient";
+import { useGetPizzas } from "./pizza";
+import { useGetIngredients } from "./ingredients";
 
 type RegisterPayload = {
   pizzas: Pizza[];
@@ -51,7 +55,7 @@ async function register(payload: RegisterPayload): Promise<RegisterResponse> {
   return { message: "Creation successful" };
 }
 
-async function getOrders(): Promise<Order[]> {
+async function getOrders(): Promise<ApiOrder[]> {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
     method: "GET",
     headers: authHeaders({ "Content-Type": "application/json" }),
@@ -65,7 +69,7 @@ async function getOrders(): Promise<Order[]> {
   return res.json();
 }
 
-async function getUserOrders(): Promise<Order[]> {
+async function getUserOrders(): Promise<ApiOrder[]> {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/user`, {
     method: "GET",
     headers: authHeaders({ "Content-Type": "application/json" }),
@@ -106,6 +110,57 @@ async function deleteOrder(id: string): Promise<DeleteResponse> {
   return { message: "Deletion successful" };
 }
 
+const NO_ORDERS: ApiOrder[] = [];
+
+const missingPizza = (id: string): Pizza => ({
+  id,
+  name: "Unavailable pizza",
+  ingredients: [],
+  description: "",
+  price: 0,
+});
+
+const missingIngredient = (id: string): Ingredient => ({
+  id,
+  name: "Unavailable extra",
+  price: 0,
+  stock: 0,
+});
+
+const getItemTotal = (item: OrderItem) =>
+  (item.pizza.price + item.extras.reduce((sum, extra) => sum + extra.price, 0)) * item.quantity;
+
+function hydrateOrder(
+  order: ApiOrder,
+  pizzasById: Map<string, Pizza>,
+  ingredientsById: Map<string, Ingredient>,
+): Order {
+  const items = order.items.map((item) => ({
+    quantity: item.quantity,
+    pizza: pizzasById.get(item.pizza) ?? missingPizza(item.pizza),
+    extras: item.extras.map((id) => ingredientsById.get(id) ?? missingIngredient(id)),
+  }));
+
+  return {
+    ...order,
+    items,
+    totalPrice: items.reduce((total, item) => total + getItemTotal(item), 0),
+  };
+}
+
+function useHydratedOrders(orders: ApiOrder[]): Order[] {
+  const { data: pizzas } = useGetPizzas();
+  const { data: ingredients } = useGetIngredients();
+
+  return useMemo(() => {
+    const pizzasById = new Map((pizzas ?? []).map((pizza) => [pizza.id, pizza]));
+    const ingredientsById = new Map(
+      (ingredients ?? []).map((ingredient) => [ingredient.id, ingredient]),
+    );
+    return orders.map((order) => hydrateOrder(order, pizzasById, ingredientsById));
+  }, [orders, pizzas, ingredients]);
+}
+
 export function useCreateOrder() {
   const queryClient = useQueryClient();
   
@@ -128,11 +183,13 @@ export function useDeleteOrder() {
 }
 
 export function useGetOrders(enabled = true) {
-  return useQuery({
+  const { data, ...rest } = useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
     enabled,
   });
+
+  return { ...rest, data: useHydratedOrders(data ?? NO_ORDERS) };
 }
 
 export function useUpdateOrder() {
@@ -146,9 +203,11 @@ export function useUpdateOrder() {
 }
 
 export function useGetUserOrders(enabled = true) {
-  return useQuery({
+  const { data, ...rest } = useQuery({
     queryKey: ["userOrders"],
     queryFn: getUserOrders,
     enabled,
   });
+
+  return { ...rest, data: useHydratedOrders(data ?? NO_ORDERS) };
 }

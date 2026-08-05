@@ -3,18 +3,20 @@ import type { Order, OrderItem } from "../../interfaces/Order"
 import { OrderStatusEnum } from "../../constants/order-status"
 import Barcode from "react-barcode";
 
-const createOrderItem = (item: OrderItem) => {
+const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+
+const OrderItemRow = ({ item }: { item: OrderItem }) => {
   return (
     <Stack>
       <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1, px: '5px' }}>
-        <Typography variant="body2">{item.quantity} x {item.pizza.name || 'Unknown'}</Typography>
-        <Typography variant="body2">${item.pizza.price || 0}</Typography>
+        <Typography variant="body2">{item.quantity} x {item.pizza.name}</Typography>
+        <Typography variant="body2">{formatPrice(item.pizza.price * item.quantity)}</Typography>
       </Stack>
       <Stack>
-        {item.extras.map((extra) => (
-          <Stack key={extra.id} direction="row" sx={{ justifyContent: 'space-between', px: 2, color: 'gray' }}>
-            <Typography variant="body2">{extra.name || 'Unknown'}</Typography>
-            <Typography variant="body2">${extra.price || 0}</Typography>
+        {item.extras.map((extra, index) => (
+          <Stack key={`${extra.id}-${index}`} direction="row" sx={{ justifyContent: 'space-between', px: 2, color: 'gray' }}>
+            <Typography variant="body2">{extra.name}</Typography>
+            <Typography variant="body2">{formatPrice(extra.price * item.quantity)}</Typography>
           </Stack>
         ))}
       </Stack>
@@ -48,7 +50,7 @@ export const Receipt = ({ order }: { order: Order }) => {
     }}>
       <Stack>
         <Typography variant="body1">#{order.id}</Typography>
-        <Typography variant="body1">by: {order.orderedBy?.email || 'Unknown'}</Typography>
+        <Typography variant="body1">by: {order.orderedByUserEmail}</Typography>
         <Typography variant="body1">on: {new Date(order.createdAt).toLocaleDateString()}</Typography>
       </Stack>
       <Stack sx={{ borderBottom: '1px dashed #000', borderTop: '1px dashed #000', padding: '0.3rem 0' }}>
@@ -59,12 +61,19 @@ export const Receipt = ({ order }: { order: Order }) => {
           <Typography variant="body1">Items</Typography>
           <Typography variant="body1">Price</Typography>
         </Stack>
-        {order.items.map((item) => createOrderItem(item))}
+        {order.items.map((item, index) => (
+          <OrderItemRow key={`${item.pizza.id}-${index}`} item={item} />
+        ))}
         <Stack direction="row" sx={{ justifyContent: 'space-between', borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
           <Typography variant="h5">Total</Typography>
-          <Typography variant="h5">${order.totalPrice}</Typography>
+          <Typography variant="h5">{formatPrice(order.totalPrice)}</Typography>
         </Stack>
       </Stack>
+      {order.note && (
+        <Stack sx={{ borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
+          <Typography variant="body2" sx={{ color: 'gray' }}>note: {order.note}</Typography>
+        </Stack>
+      )}
       {order.status === OrderStatusEnum.ACTIVE && (
         <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1 }}>
           <Button size="small" variant="contained" color="primary">Complete</Button>
