@@ -57,13 +57,10 @@ export const IngredientsTable = () => {
   };
 
   const handleSearch = (value: string) => {
-    const ingredient = ingredients.find((item) => item.id === value);
-    if (ingredient) {
-      setSelectedIngredient(ingredient);
-      setOpenModal(true);
-    } else {
-      enqueueSnackbar('Ingredient not found', { variant: 'error' });
-    }
+    const ingredient = ingredients.find((item) => item.id.toLowerCase() === value.toLowerCase());
+    if (!ingredient) return enqueueSnackbar('Ingredient not found', { variant: 'error' });
+    setSelectedIngredient(ingredient);
+    setOpenModal(true);
   };
 
   return (
