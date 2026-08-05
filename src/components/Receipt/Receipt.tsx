@@ -50,8 +50,8 @@ export const Receipt = ({ order }: { order: Order }) => {
     }}>
       <Stack>
         <Typography variant="body1">#{order.id}</Typography>
-        <Typography variant="body1">by: {order.orderedByUserEmail}</Typography>
-        <Typography variant="body1">on: {new Date(order.createdAt).toLocaleDateString()}</Typography>
+        <Typography variant="body1">By: {order.orderedByUserEmail}</Typography>
+        <Typography variant="body1">Date: {new Date(order.createdAt).toLocaleString()}</Typography>
       </Stack>
       <Stack sx={{ borderBottom: '1px dashed #000', borderTop: '1px dashed #000', padding: '0.3rem 0' }}>
         <Typography align="center" variant="h6">Order</Typography>
@@ -64,13 +64,13 @@ export const Receipt = ({ order }: { order: Order }) => {
         {order.items.map((item, index) => (
           <OrderItemRow key={`${item.pizza.id}-${index}`} item={item} />
         ))}
-        <Stack direction="row" sx={{ justifyContent: 'space-between', borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
-          <Typography variant="h5">Total</Typography>
-          <Typography variant="h5">{formatPrice(order.totalPrice)}</Typography>
-        </Stack>
+      </Stack>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
+        <Typography variant="h5">Total</Typography>
+        <Typography variant="h5">{formatPrice(order.totalPrice)}</Typography>
       </Stack>
       {order.note && (
-        <Stack sx={{ borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
+        <Stack sx={{ borderTop: '1px dashed #000', paddingTop: '0.3rem', flexGrow: 1}}>
           <Typography variant="body2" sx={{ color: 'gray' }}>note: {order.note}</Typography>
         </Stack>
       )}

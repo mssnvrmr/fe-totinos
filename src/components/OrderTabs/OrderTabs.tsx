@@ -1,4 +1,4 @@
-import { Tabs, Tab, Box } from '@mui/material';
+import { Tabs, Tab, Box, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import { useGetOrders } from '../../api/orders';
 import { OrderStatusEnum } from '../../constants/order-status';
@@ -24,7 +24,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Stack direction="row" sx={{ p: 3, gap: 1, overflowX: 'auto', overflowY: 'hidden' }}>{children}</Stack>}
     </div>
   );
 }
@@ -45,7 +45,7 @@ export const OrderTabs = () => {
 
   const activeOrders = orders?.filter((order) => order.status === OrderStatusEnum.ACTIVE);
   const completedOrders = orders?.filter((order) => order.status === OrderStatusEnum.FINISHED);
-  const cancelledOrders = orders?.filter((order) => order.status === OrderStatusEnum.CANCELLED);  
+  const cancelledOrders = orders?.filter((order) => order.status === OrderStatusEnum.CANCELLED);
   const [value, setValue] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -77,6 +77,5 @@ export const OrderTabs = () => {
         ))}
       </CustomTabPanel>
     </Box>
-
   );
 };
