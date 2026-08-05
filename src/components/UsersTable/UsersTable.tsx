@@ -57,13 +57,10 @@ export const UsersTable = () => {
   };
 
   const handleSearch = (value: string) => {
-    const user = users.find((item) => item.id === value);
-    if (user) {
-      setSelectedUser(user);
-      setOpenModal(true);
-    } else {
-      enqueueSnackbar('User not found', { variant: 'error' });
-    }
+    const user = users.find((item) => item.email.toLowerCase() === value.toLowerCase());
+    if (!user) return enqueueSnackbar('User not found', { variant: 'error' });
+    setSelectedUser(user);
+    setOpenModal(true);
   };
 
   return (
@@ -96,7 +93,7 @@ export const UsersTable = () => {
           <Button variant="contained" color="primary" onClick={handleCreate}>
             Create New User
           </Button>
-          <SearchField onSearch={handleSearch} label="Search by Id" />
+          <SearchField onSearch={handleSearch} label="Search by E-mail" />
         </Stack>
       )}
       <CustomDataTable
