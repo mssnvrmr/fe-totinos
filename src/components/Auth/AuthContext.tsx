@@ -5,6 +5,7 @@ import { UserRolesEnum, type UserRole } from '../../constants/user-roles';
 interface AuthContextType {
   token: string | null;
   userId: string | null;
+  userEmail: string | null;
   userName: string | null;
   role: UserRole | null;
   isAuthenticated: boolean;
@@ -26,7 +27,7 @@ function clearStoredAuth(): void {
   AUTH_KEYS.forEach((key) => localStorage.removeItem(key));
 }
 
-type TokenPayload = { id?: string; role?: string };
+type TokenPayload = { id?: string; email?: string; role?: string };
 
 /** Tokens issued before role was added to the JWT payload fail admin checks with 403. */
 function readTokenPayload(token: string): TokenPayload | null {
@@ -57,6 +58,11 @@ function getValidStoredToken(): string | null {
 function getUserIdFromToken(token: string | null): string | null {
   if (!token) return null;
   return readTokenPayload(token)?.id ?? null;
+}
+
+function getUserEmailFromToken(token: string | null): string | null {
+  if (!token) return null;
+  return readTokenPayload(token)?.email ?? null;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -90,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const userId = getUserIdFromToken(token);
+  const userEmail = getUserEmailFromToken(token);
   const isAuthenticated = !!token;
   const isAdmin = role === UserRolesEnum.ADMIN;
 
@@ -98,6 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       value={{
         token,
         userId,
+        userEmail,
         userName,
         role,
         isAuthenticated,

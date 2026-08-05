@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import type { ApiOrder, Order, OrderItem, OrderStatus } from "../interfaces/Order";
+import type { ApiOrder, ApiOrderItem, Order, OrderItem, OrderStatus } from "../interfaces/Order";
 import type { Pizza } from "../interfaces/Pizza";
 import type { Ingredient } from "../interfaces/Ingredient";
 import { useGetPizzas } from "./pizza";
 import { useGetIngredients } from "./ingredients";
 
 type RegisterPayload = {
-  pizzas: Pizza[];
-  note: string;
-  totalPrice: number;
+  orderedByUserEmail: string;
+  items: ApiOrderItem[];
+  note?: string;
   status: OrderStatus;
 };
   
@@ -168,6 +168,7 @@ export function useCreateOrder() {
     mutationFn: register,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["userOrders"] });
     },
   });
 }

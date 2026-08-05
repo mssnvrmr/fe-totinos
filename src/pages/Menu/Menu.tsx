@@ -31,6 +31,7 @@ export const Menu = () => {
 
   const handleClearOrder = () => {
     setOrderItems([]);
+    setNotes('');
   };
   
   const handleRemoveItemFromOrder = (index: number) => {
