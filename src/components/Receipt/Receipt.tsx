@@ -110,17 +110,17 @@ export const Receipt = ({ order }: { order: Order }) => {
           <OrderItemRow key={`${item.pizza.id}-${index}`} item={item} />
         ))}
       </Stack>
-      <Stack direction="row" sx={{ justifyContent: 'space-between', borderTop: '1px dashed #000', paddingTop: '0.3rem' }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', borderBottom: '1px dashed #000', borderTop: '1px dashed #000', py: 1 }}>
         <Typography variant="h5"><b>Total:</b></Typography>
         <Typography variant="h5"><b>{formatPrice(order.totalPrice)}</b></Typography>
       </Stack>
       {order.note && (
-        <Stack sx={{ borderTop: '1px dashed #000', paddingTop: '0.3rem', flexGrow: 1}}>
+        <Stack sx={{ flexGrow: 1}}>
           <Typography variant="body2" sx={{ color: 'gray' }}>note: {order.note}</Typography>
         </Stack>
       )}
       {order.status === OrderStatusEnum.ACTIVE && (
-        <Stack direction="row" sx={{ justifyContent: 'space-between', gap: 1 }}>
+        <Stack direction="row" sx={{ flexGrow: 1, justifyContent: 'space-between', gap: 1, alignItems: 'flex-end'}}>
           {isAdmin && <Button size="small" variant="contained" color="primary" onClick={handleCompleteOrder} disabled={isUpdatingOrder}>Complete</Button>}
           <Button size="small" variant="outlined" color="error" onClick={handleCancelOrder} disabled={isUpdatingOrder}>Cancel</Button>
         </Stack>
