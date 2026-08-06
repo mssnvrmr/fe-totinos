@@ -168,7 +168,7 @@ export const PizzaCard = ({ pizza, onAddItem, onEditPizza, onDeletePizza }: Pizz
             />
             <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="body2">Quantity</Typography>
-              <NumberSpinner control={control} errors={errors} name="quantity" label="Quantity" min={1} step={1} />
+              <NumberSpinner control={control} errors={errors} name="quantity" min={1} step={1} />
             </Stack>
 
             <Stack direction="row" spacing={2}>
