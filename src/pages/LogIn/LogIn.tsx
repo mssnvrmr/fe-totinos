@@ -37,7 +37,7 @@ export const LogIn = () => {
       onSuccess: ({ token, name, role }) => {
         login(token, name, role);
         enqueueSnackbar('Logged in successfully', { variant: 'success' });
-        navigate(ROUTES.ORDERS);
+        navigate(ROUTES.MENU);
       },
       onError: (error) => {
         enqueueSnackbar(`Login failed: ${error.message}`, { variant: 'error' });
