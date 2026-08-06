@@ -3,7 +3,7 @@ import { Stack, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useLogin } from '../../api/users';
-import { useAuth } from '../../components/Auth/AuthContext';
+import { useAuth } from '../../components/Auth/useAuth';
 import { ROUTES } from '../../config/routes';
 import { Main } from '../../components/Templates/Main/Main';
 import { BiSolidLogIn } from "react-icons/bi";

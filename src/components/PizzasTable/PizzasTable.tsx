@@ -8,7 +8,7 @@ import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { PizzaForm } from '../PizzaForm/PizzaForm';
 import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import type { Pizza } from '../../interfaces/Pizza';
 import { SearchField } from '../FormFields/SearchField/SearchField';
 

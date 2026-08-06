@@ -7,7 +7,7 @@ import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { IngredientForm } from '../IngredientForm/IngredientForm';
 import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import type { Ingredient } from '../../interfaces/Ingredient';
 import { SearchField } from '../FormFields/SearchField/SearchField';
 

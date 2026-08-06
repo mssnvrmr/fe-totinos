@@ -8,7 +8,7 @@ import { Menu } from '../../pages/Menu/Menu';
 import { Ingredients } from '../../pages/Ingredients/Ingredients';
 import { Users } from '../../pages/Users/Users';
 import PrivateRoute from './PrivateRoute';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import { NotFound } from '../../pages/NotFound/NotFound';
 import { Profile } from '../../pages/Profile/Profile';
 

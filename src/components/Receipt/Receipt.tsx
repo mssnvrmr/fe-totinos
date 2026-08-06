@@ -3,7 +3,7 @@ import type { Order, OrderItem, OrderStatus } from "../../interfaces/Order"
 import { OrderStatusEnum } from "../../constants/order-status"
 import Barcode from "react-barcode";
 import { UserRolesEnum } from "../../constants/user-roles";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from '../Auth/useAuth';
 import { useUpdateOrder } from "../../api/orders";
 import { useSnackbar } from "notistack";
 

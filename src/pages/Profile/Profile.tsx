@@ -1,7 +1,7 @@
 import { CircularProgress, Paper, Typography } from '@mui/material';
 import { IoPersonSharp } from 'react-icons/io5';
 import { useGetUser } from '../../api/users';
-import { useAuth } from '../../components/Auth/AuthContext';
+import { useAuth } from '../../components/Auth/useAuth';
 import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { Main } from '../../components/Templates/Main/Main';
 import { UserForm } from '../../components/UserForm/UserForm';

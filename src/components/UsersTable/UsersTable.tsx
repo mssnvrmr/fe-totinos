@@ -7,7 +7,7 @@ import { UserRolesEnum } from '../../constants/user-roles';
 import { CustomModal } from '../CustomModal/CustomModal';
 import { UserForm } from '../UserForm/UserForm';
 import { CustomDataTable } from '../CustomDataTable/CustomDataTable';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import type { User } from '../../interfaces/User';
 import { SearchField } from '../FormFields/SearchField/SearchField';
 

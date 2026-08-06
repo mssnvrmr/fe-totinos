@@ -4,7 +4,7 @@ import { useGetOrders, useGetUserOrders } from '../../api/orders';
 import { OrderStatusEnum } from '../../constants/order-status';
 import { Receipt } from '../Receipt/Receipt';
 import { UserRolesEnum } from '../../constants/user-roles';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 
 interface TabPanelProps {
   children?: React.ReactNode;

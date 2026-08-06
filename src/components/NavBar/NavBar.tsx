@@ -2,7 +2,7 @@ import { AppBar, Box, Button, IconButton, Stack, Toolbar, Typography } from '@mu
 import { GiFullPizza } from 'react-icons/gi';
 import { ROUTES } from '../../config/routes';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 
 export const NavBar = () => {
   const navigate = useNavigate();

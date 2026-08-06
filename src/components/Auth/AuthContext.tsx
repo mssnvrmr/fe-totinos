@@ -1,21 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState } from 'react';
 import type { ReactNode } from 'react';
 import { UserRolesEnum, type UserRole } from '../../constants/user-roles';
-
-interface AuthContextType {
-  token: string | null;
-  userId: string | null;
-  userEmail: string | null;
-  userName: string | null;
-  role: UserRole | null;
-  isAuthenticated: boolean;
-  isAdmin: boolean;
-  login: (newToken: string, name: string, role: UserRole) => void;
-  updateUserName: (name: string) => void;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from './auth-context';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -118,12 +104,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

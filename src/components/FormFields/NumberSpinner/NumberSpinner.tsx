@@ -13,7 +13,6 @@ interface NumberSpinnerProps<T extends FieldValues> {
   control: Control<T>;
   errors: FieldErrors<T>;
   name: Path<T>;
-  label?: string;
   min?: number;
   max?: number;
   step?: number;
@@ -23,7 +22,6 @@ export const NumberSpinner = <T extends FieldValues>({
   control,
   errors,
   name,
-  label = 'Quantity',
   min = 0,
   max = 100,
   step = 1,

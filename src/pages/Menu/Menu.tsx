@@ -12,7 +12,7 @@ import type { Pizza } from '../../interfaces/Pizza';
 import { CustomModal } from '../../components/CustomModal/CustomModal';
 import { PizzaForm } from '../../components/PizzaForm/PizzaForm';
 import { enqueueSnackbar } from 'notistack';
-import { useAuth } from '../../components/Auth/AuthContext';
+import { useAuth } from '../../components/Auth/useAuth';
 import { UserRolesEnum } from '../../constants/user-roles';
 import { getInsufficientStockIngredients } from '../../utils/calculate-stock';
 

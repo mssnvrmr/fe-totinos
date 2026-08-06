@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignUp, useUpdateUser } from '../../api/users';
 import { UserRolesEnum } from '../../constants/user-roles';
-import { useAuth } from '../Auth/AuthContext';
+import { useAuth } from '../Auth/useAuth';
 import { PasswordField } from '../FormFields/PasswordField/PasswordField';
 import { PhoneField } from '../FormFields/PhoneField/PhoneField';
 import { EmailField } from '../FormFields/EmailField/EmailField';

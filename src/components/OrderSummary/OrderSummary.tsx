@@ -4,7 +4,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useCreateOrder } from "../../api/orders";
 import { useGetIngredients } from "../../api/ingredients";
 import { OrderStatusEnum } from "../../constants/order-status";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from '../Auth/useAuth';
 import { useSnackbar } from "notistack";
 import { getInsufficientStockIngredients } from "../../utils/calculate-stock";
 

@@ -23,7 +23,7 @@ import { itemFormSchema, type ItemFormData } from './ItemForm.schema';
 import { CustomSelectField } from '../FormFields/CustomSelectField/CustomSelectField';
 import { NumberSpinner } from '../FormFields/NumberSpinner/NumberSpinner';
 import getPizzaIngredients from "../../utils/get-pizza-ingredients";
-import { useAuth } from "../Auth/AuthContext";
+import { useAuth } from '../Auth/useAuth';
 import { UserRolesEnum } from "../../constants/user-roles";
 import { ROUTES } from "../../config/routes";
 
